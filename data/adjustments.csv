@@ -1,0 +1,261 @@
+date,agent,asana_csm,seconds,reason,length_text,confidence
+2026-07-31,Ruchi Sharma,Ruchi Sharma,1800,8x8 Issue,30 mins,Explicit units
+2026-08-03,Madison McCaskey,Madison McCaskey,2493,,41:33,ASSUMED mm:ss
+2026-08-04,Ruchi Sharma,Ruchi Sharma,3000,8x8 Issue,50 Mins,Explicit units
+2026-08-06,Kelly Householder,Kelly Householder,3502,,58:22,ASSUMED mm:ss
+2026-08-06,Jonathan Miles,Jonathan Miles,1920,Account related call via other system,32,ASSUMED minutes
+2026-08-06,Jasmine McLain,Jasmine McLain,2674,Account related call via other system,44m 34s,Explicit units
+2026-08-06,Brittany Hohensee,Brittany Hohensee,4800,Account related call via other system,1h 20m,Explicit units
+2026-08-06,Staci Maples (MAPLES01),Staci Maples,2640,Account related call via other system,44 minutes,Explicit units
+2026-08-06,Keila Moreno Mercado,Keila Moreno,2400,8x8 Issue,40 minutes,Explicit units
+2026-08-10,Hunter Leake,Hunter Leake,3563,,59:23,ASSUMED mm:ss
+2026-08-10,Mark Hayes,Mark Hayes,1638,,27:18,ASSUMED mm:ss
+2026-08-10,Jenny Kimerling,Jenny Kimerling,1680,,28 minutes,Explicit units
+2026-08-11,Alicia Battiata,Alicia Battiata,4020,,1:07:00,Explicit h:mm:ss
+2026-08-11,William King,Will King,1818,,30.18,ASSUMED decimal means mm.ss
+2026-08-11,Jonathan Miles,Jonathan Miles,900,,15,ASSUMED minutes
+2026-08-11,David Ostendorf,David Ostendorf,1800,,30 minutes,Explicit units
+2026-08-11,Jonathan Miles,Jonathan Miles,1800,,30,ASSUMED minutes
+2026-08-11,Jenny Kimerling,Jenny Kimerling,1380,,23 minutes,Explicit units
+2026-08-11,Mark Hayes,Mark Hayes,2536,,42:16,ASSUMED mm:ss
+2026-08-11,Jenny Kimerling,Jenny Kimerling,3900,,1 hour and 5 minutes,Explicit units
+2026-08-12,Chyna Elias,Chyna Elias,2682,,44min 42sec,Explicit units
+2026-08-12,Hunter Leake,Hunter Leake,2068,,34:28,ASSUMED mm:ss
+2026-08-12,Keila Moreno Mercado,Keila Moreno,1560,,26 minutes,Explicit units
+2026-08-12,Scott Jennings,Scott Jennings,3234,,53:54,ASSUMED mm:ss
+2026-08-12,Hunter Leake,Hunter Leake,3245,,54:05,ASSUMED mm:ss
+2026-08-12,Jenny Kimerling,Jenny Kimerling,2700,,45 minutes,Explicit units
+2026-08-12,Ruchi Sharma,Ruchi Sharma,1200,,20Mins,Explicit units
+2026-08-13,Jonathan Miles,Jonathan Miles,900,,15,ASSUMED minutes
+2026-08-14,Yenifer Medina Perez,Yenifer Medina,1380,,23 minutes,Explicit units
+2026-08-14,Donny Dishmey Febles,Donny Dishmey Febles,1378,,22:58,ASSUMED mm:ss
+2026-08-14,Scott Jennings,Scott Jennings,3798,,01:03:18,Explicit h:mm:ss
+2026-08-14,Hunter Leake,Hunter Leake,1235,,20:35,ASSUMED mm:ss
+2026-08-17,Madison McCaskey,Madison McCaskey,5129,,1:25:29,Explicit h:mm:ss
+2026-08-17,Jenny Kimerling,Jenny Kimerling,1260,,21 minutes,Explicit units
+2026-08-17,Jonathan Miles,Jonathan Miles,1800,,30,ASSUMED minutes
+2026-08-17,Hunter Leake,Hunter Leake,3596,,59:56,ASSUMED mm:ss
+2026-08-17,Scott Jennings,Scott Jennings,2873,,47:53,ASSUMED mm:ss
+2026-08-17,Scott Jennings,Scott Jennings,2682,,44:42,ASSUMED mm:ss
+2026-08-17,Mark Hayes,Mark Hayes,2589,,43:09,ASSUMED mm:ss
+2026-08-18,Kelly Householder,Kelly Householder,2269,,37:49,ASSUMED mm:ss
+2026-08-18,Madison McCaskey,Madison McCaskey,1332,,22:12,ASSUMED mm:ss
+2026-08-18,William King,Will King,608,,10.08,ASSUMED decimal means mm.ss
+2026-08-19,Jenny Kimerling,Jenny Kimerling,4140,,69 minutes,Explicit units
+2026-08-19,Ladonna Williams,La'Donna Williams,5446,,1:30:46,Explicit h:mm:ss
+2026-08-19,Mark Hayes,Mark Hayes,2340,,39 minutes,Explicit units
+2026-08-19,Brittany Hohensee,Brittany Hohensee,2952,,00:49:12,Explicit h:mm:ss
+2026-08-19,Keila Moreno Mercado,Keila Moreno,1440,,24 minutes,Explicit units
+2026-08-19,Haley Mitchell,Haley Mitchell,2100,,35 minutes,Explicit units
+2026-08-19,Keila Moreno Mercado,Keila Moreno,3480,,58 minutes,Explicit units
+2026-08-20,Brittany Hohensee,Brittany Hohensee,2605,,00:43:25,Explicit h:mm:ss
+2026-08-20,Donny Dishmey Febles,Donny Dishmey Febles,1883,,00:31:23,Explicit h:mm:ss
+2026-08-20,Donny Dishmey Febles,Donny Dishmey Febles,2724,,00:45:24,Explicit h:mm:ss
+2026-08-20,Jonathan Miles,Jonathan Miles,1740,,29,ASSUMED minutes
+2026-08-20,Jasmine McLain,Jasmine McLain,4598,,1h 16m 38s,Explicit units
+2026-08-21,Jonathan Miles,Jonathan Miles,1680,,28,ASSUMED minutes
+2026-08-21,Scott Jennings,Scott Jennings,1754,,29:14,ASSUMED mm:ss
+2026-08-21,Erika Hubbard,Erika Hubbard,2935,,48.55,ASSUMED decimal means mm.ss
+2026-08-21,Mark Hayes,Mark Hayes,1931,,32:11,ASSUMED mm:ss
+2026-08-24,Brittany Hohensee,Brittany Hohensee,579,,09:39,ASSUMED mm:ss
+2026-08-24,Erika Hubbard,Erika Hubbard,3120,,52 mins,Explicit units
+2026-08-24,Madison McCaskey,Madison McCaskey,92,,1:32,"FLAG ambiguous, could be h:mm"
+2026-08-24,Erika Hubbard,Erika Hubbard,1260,,21.00,ASSUMED decimal means mm.ss
+2026-08-25,Jonathan Miles,Jonathan Miles,1260,,21,ASSUMED minutes
+2026-08-25,Hunter Leake,Hunter Leake,1965,,32:45,ASSUMED mm:ss
+2026-08-25,Jasmine McLain,Jasmine McLain,1841,,30 m 41 s,Explicit units
+2026-08-25,Hunter Leake,Hunter Leake,3987,,1:06:27,Explicit h:mm:ss
+2026-08-25,Jonathan Miles,Jonathan Miles,3600,,60,ASSUMED minutes
+2026-08-25,Jonathan Miles,Jonathan Miles,1620,,27,ASSUMED minutes
+2026-08-25,Ruchi Sharma,Ruchi Sharma,4500,,75mins,Explicit units
+2026-08-26,Pedro Jimenez Medina,Pedro Jimenez Medina,4980,,83 minutes,Explicit units
+2026-08-26,Summer Rima,Summer Rima,4500,,75,ASSUMED minutes
+2026-08-26,Holly Fatla,Holly Koehn,2220,,37 min,Explicit units
+2026-08-26,Holly Fatla,Holly Koehn,1620,,27 min,Explicit units
+2026-08-26,Mark Hayes,Mark Hayes,2831,,47:11,ASSUMED mm:ss
+2026-08-26,Jonathan Miles,Jonathan Miles,840,,14,ASSUMED minutes
+2026-08-26,Summer Rima,Summer Rima,4560,,76,ASSUMED minutes
+2026-08-26,Erika Hubbard,Erika Hubbard,724,,12:04,ASSUMED mm:ss
+2026-08-27,Yenifer Medina Perez,Yenifer Medina,1800,,30 min,Explicit units
+2026-08-27,Stephanie Stalone (STALOS01),Stephanie Noffsinger,3337,,55.37,ASSUMED decimal means mm.ss
+2026-08-27,Jasmine McLain,Jasmine McLain,1278,,21m 18s,Explicit units
+2026-08-28,Lisbeth Cruz Marte,Lisbeth Cruz Marte,2657,,44m 17s,Explicit units
+2026-08-28,Yenifer Medina Perez,Yenifer Medina,2640,,44 min,Explicit units
+2026-08-28,Jonathan Miles,Jonathan Miles,2400,,40,ASSUMED minutes
+2026-08-28,William King,Will King,614,,10:14,ASSUMED mm:ss
+2026-08-31,Brittany Hohensee,Brittany Hohensee,3060,,51 minutes,Explicit units
+2026-08-31,Brittany Hohensee,Brittany Hohensee,1980,,33 minutes,Explicit units
+2026-08-31,Brittany Hohensee,Brittany Hohensee,1920,,32 minutes,Explicit units
+2026-08-31,Jonathan Miles,Jonathan Miles,480,,8,ASSUMED minutes
+2026-08-31,Mark Hayes,Mark Hayes,1388,,23:08,ASSUMED mm:ss
+2026-08-31,Keila Moreno Mercado,Keila Moreno,1080,,18 minutes,Explicit units
+2026-08-31,Keila Moreno Mercado,Keila Moreno,2160,,36 minutes,Explicit units
+2026-08-31,Haley Mitchell,Haley Mitchell,1028,,17:08,ASSUMED mm:ss
+2026-09-01,Teresa Gregorio,Teresa Gregorio,12305,,3:24:65,FLAG seconds value over 59
+2026-09-01,Holly Fatla,Holly Koehn,255,,4m 15s,Explicit units
+2026-09-01,Holly Fatla,Holly Koehn,1375,,22m 55s,Explicit units
+2026-09-01,Holly Fatla,Holly Koehn,932,,15m 32s,Explicit units
+2026-09-01,Kelly Householder,Kelly Householder,656,Account related call via other system,0:10:56,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-02,Chyna Elias,Chyna Elias,1026,,17min 6sec,Explicit units
+2026-09-02,Sydney Pacheco,Sydney Pacheco,4200,,70 minutes,Explicit units
+2026-09-02,Alicia Battiata,Alicia Battiata,1412,,23:32,ASSUMED mm:ss
+2026-09-02,Brittany Hohensee,Brittany Hohensee,3237,,53:57,ASSUMED mm:ss
+2026-09-02,Madison McCaskey,Madison McCaskey,1147,,19:07,ASSUMED mm:ss
+2026-09-02,Madison McCaskey,Madison McCaskey,983,,16:23,ASSUMED mm:ss
+2026-09-02,Mark Hayes,Mark Hayes,1998,,33:18,ASSUMED mm:ss
+2026-09-02,Jonathan Miles,Jonathan Miles,900,,15,ASSUMED minutes
+2026-09-02,Erika Hubbard,Erika Hubbard,2411,,40 mins 11sec,Explicit units
+2026-09-02,Kelly Householder,Kelly Householder,2349,Account related call via other system,0:39:09,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-03,Alicia Battiata,Alicia Battiata,2557,,42:37,ASSUMED mm:ss
+2026-09-03,Alicia Battiata,Alicia Battiata,2875,,47:55,ASSUMED mm:ss
+2026-09-03,Keila Moreno Mercado,Keila Moreno,2940,,49 minutes,Explicit units
+2026-09-03,Keila Moreno Mercado,Keila Moreno,3360,,56 minutes,Explicit units
+2026-09-03,Stephanie Stalone (STALOS01),Stephanie Noffsinger,1475,,24.35,ASSUMED decimal means mm.ss
+2026-09-03,Pedro Jimenez Medina,Pedro Jimenez Medina,2640,,44 minutes,Explicit units
+2026-09-03,William King,Will King,1297,,21.37,ASSUMED decimal means mm.ss
+2026-09-03,Haley Mitchell,Haley Mitchell,3247,,54:07,ASSUMED mm:ss
+2026-09-04,William King,Will King,690,,11.30,ASSUMED decimal means mm.ss
+2026-09-04,Kelly Householder,Kelly Householder,222,Account related call via other system,0:03:42,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-08,Chyna Elias,Chyna Elias,784,,13min 4sec,Explicit units
+2026-09-08,Jonathan Miles,Jonathan Miles,1800,,30,ASSUMED minutes
+2026-09-08,Alicia Battiata,Alicia Battiata,2160,,36:00,ASSUMED mm:ss
+2026-09-08,Scott Jennings,Scott Jennings,2212,,36:52,ASSUMED mm:ss
+2026-09-08,Teresa Gregorio,Teresa Gregorio,1434,,23.9 minutes,Explicit units
+2026-09-08,Mark Hayes,Mark Hayes,645,,10:45,ASSUMED mm:ss
+2026-09-08,David Ostendorf,David Ostendorf,1800,,30 minutes,Explicit units
+2026-09-08,Kelly Householder,Kelly Householder,2894,Account related call via other system,0:48:14,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-09,Staci Maples (MAPLES01),Staci Maples,660,,1hr11min,Explicit units
+2026-09-09,Alicia Battiata,Alicia Battiata,1404,,23:24,ASSUMED mm:ss
+2026-09-09,Brittany Hohensee,Brittany Hohensee,2225,,37:05,ASSUMED mm:ss
+2026-09-09,Brittany Hohensee,Brittany Hohensee,982,,16:22,ASSUMED mm:ss
+2026-09-09,Mark Hayes,Mark Hayes,2174,,36:14,ASSUMED mm:ss
+2026-09-09,Pedro Jimenez Medina,Pedro Jimenez Medina,4260,,1 hour and 11 minutes,Explicit units
+2026-09-09,Madison McCaskey,Madison McCaskey,6060,,1:41:00,Explicit h:mm:ss
+2026-09-09,David Ostendorf,David Ostendorf,3600,,1 hour,Explicit units
+2026-09-09,Kelly Householder,Kelly Householder,2174,Account related call via other system,0:36:14,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-10,Hunter Leake,Hunter Leake,2709,,45:09,ASSUMED mm:ss
+2026-09-10,Madison McCaskey,Madison McCaskey,4680,,1:53:00 (35 minutes was in 8x8),Stated in note
+2026-09-10,Brittany Hohensee,Brittany Hohensee,956,,15: 56,ASSUMED mm:ss
+2026-09-10,Holly Fatla,Holly Koehn,1620,,27 min,Explicit units
+2026-09-11,Jenny Kimerling,Jenny Kimerling,1500,,25 minutes,Explicit units
+2026-09-11,Lorenz Marsh,Lorenz Marsh,4380,,1hr 13mn,Explicit units
+2026-09-11,Chyna Elias,Chyna Elias,1155,,19min 15sec,Explicit units
+2026-09-11,William King,Will King,1002,,16.42,ASSUMED decimal means mm.ss
+2026-09-11,Mark Hayes,Mark Hayes,2232,,37:12,ASSUMED mm:ss
+2026-09-11,William King,Will King,1113,,18.33,ASSUMED decimal means mm.ss
+2026-09-11,Kelly Householder,Kelly Householder,274,Account related call via other system,0:04:34,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-14,Teresa Gregorio,Teresa Gregorio,1352,,22.32,ASSUMED decimal means mm.ss
+2026-09-14,Madison McCaskey,Madison McCaskey,1902,,01:00:01.000 (28:19 was on 8x8),Stated in note
+2026-09-14,Brittany Hohensee,Brittany Hohensee,1869,,31m 9s,Explicit units
+2026-09-14,Brittany Hohensee,Brittany Hohensee,1053,,17m 33s,Explicit units
+2026-09-14,Glenys Rodriguez,Glenys Rodriguez Gomez,,,Gnarly By Nature Tree Service,UNPARSEABLE
+2026-09-14,Glenys Rodriguez,Glenys Rodriguez Gomez,2340,,39,ASSUMED minutes
+2026-09-14,Mark Hayes,Mark Hayes,1819,,30:19,ASSUMED mm:ss
+2026-09-14,Jonathan Miles,Jonathan Miles,780,,13,ASSUMED minutes
+2026-09-14,Teresa Gregorio,Teresa Gregorio,1191,,19m 51s,Explicit units
+2026-09-14,Kelly Householder,Kelly Householder,4800,Account related call via other system,1:20:00,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-15,Jonathan Miles,Jonathan Miles,600,,10,ASSUMED minutes
+2026-09-15,Mark Hayes,Mark Hayes,2210,,36:50,ASSUMED mm:ss
+2026-09-15,Madison McCaskey,Madison McCaskey,743,,00:31:35.000 (19:12 on 8x8 12:23 to be added,Stated in note
+2026-09-15,David Ostendorf,David Ostendorf,3000,,50 minutes,Explicit units
+2026-09-15,Hunter Leake,Hunter Leake,1941,,32:21,ASSUMED mm:ss
+2026-09-15,Chyna Elias,Chyna Elias,4182,,1hr 9min 42sec,Explicit units
+2026-09-15,William King,Will King,2521,,42.01,ASSUMED decimal means mm.ss
+2026-09-15,Kelly Householder,Kelly Householder,853,Account related call via other system,0:14:13,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-16,Brittany Hohensee,Brittany Hohensee,9060,,2h   31m,Explicit units
+2026-09-16,Chyna Elias,Chyna Elias,1961,,32min 41sec,Explicit units
+2026-09-16,Jenny Kimerling,Jenny Kimerling,660,,11 minutes,Explicit units
+2026-09-16,Jenny Kimerling,Jenny Kimerling,1500,,25 Minutes,Explicit units
+2026-09-16,Mariel Rosa Hernandez,Mariel Rosa Hernandez,1350,,22:30,ASSUMED mm:ss
+2026-09-16,Summer Rima,Summer Rima,6480,,1 hour and 48 minutes,Explicit units
+2026-09-16,Jason Hockett,Jason Hockett,4105,,1:08:25,Explicit h:mm:ss
+2026-09-16,Kelly Householder,Kelly Householder,2058,Account related call via other system,0:34:18,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-17,Katherine Sanchez Perez,Katherine A. Sanchez Perez,2757,,45 min 57 seg,Explicit units
+2026-09-17,Jenny Kimerling,Jenny Kimerling,1440,,24 minutes,Explicit units
+2026-09-17,Brittany Hohensee,Brittany Hohensee,3501,,58m 21s,Explicit units
+2026-09-17,Staci Maples (MAPLES01),Staci Maples,1560,,26 minutes,Explicit units
+2026-09-18,Ladonna Williams,La'Donna Williams,2820,,47 min,Explicit units
+2026-09-18,Mark Hayes,Mark Hayes,1033,,17:13,ASSUMED mm:ss
+2026-09-18,William King,Will King,1951,,32.31,ASSUMED decimal means mm.ss
+2026-09-18,William King,Will King,2050,,34.1,ASSUMED decimal means mm.ss
+2026-09-18,Jonathan Miles,Jonathan Miles,3780,,63,ASSUMED minutes
+2026-09-21,Haley Mitchell,Haley Mitchell,634,,10:34,ASSUMED mm:ss
+2026-09-21,Katherine Sanchez Perez,Katherine A. Sanchez Perez,1822,,30 min 22 seg,Explicit units
+2026-09-21,Jonathan Miles,Jonathan Miles,780,,13,ASSUMED minutes
+2026-09-21,Kelly Householder,Kelly Householder,5495,Account related call via other system,1:31:35,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-22,Madison McCaskey,Madison McCaskey,3720,,1:02:00,Explicit h:mm:ss
+2026-09-22,Katherine Sanchez Perez,Katherine A. Sanchez Perez,2081,,34 min 41 seg,Explicit units
+2026-09-22,Hunter Leake,Hunter Leake,2651,,44:11,ASSUMED mm:ss
+2026-09-22,Kelly Householder,Kelly Householder,8465,Account related call via other system,2:21:05,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-23,Staci Maples (MAPLES01),Staci Maples,600,,10 Minutes,Explicit units
+2026-09-23,Chyna Elias,Chyna Elias,903,,15min 3sec,Explicit units
+2026-09-23,Holly Fatla,Holly Koehn,3840,,1hr 4m,Explicit units
+2026-09-23,Jonathan Miles,Jonathan Miles,540,,9,ASSUMED minutes
+2026-09-24,Staci Maples (MAPLES01),Staci Maples,15596,,4 Hrs 19 Min 56 seconds,Explicit units
+2026-09-24,Staci Maples (MAPLES01),Staci Maples,1260,,21 minutes,Explicit units
+2026-09-24,Jaclyn Allen,Jaclyn Allen,1290,,21.3,ASSUMED decimal means mm.ss
+2026-09-24,Jaclyn Allen,Jaclyn Allen,896,,14.56,ASSUMED decimal means mm.ss
+2026-09-24,Brittany Hohensee,Brittany Hohensee,1440,,24m,ASSUMED minutes from note
+2026-09-24,Chyna Elias,Chyna Elias,609,,10min 9sec,Explicit units
+2026-09-24,Chyna Elias,Chyna Elias,3720,,1hr 2min,Explicit units
+2026-09-24,Taylor Sloan,Taylor Sloan,1126,,18:46,ASSUMED mm:ss
+2026-09-25,Chyna Elias,Chyna Elias,2400,,40mins,Explicit units
+2026-09-25,Brittany Hohensee,Brittany Hohensee,4860,,1h 21m,Explicit units
+2026-09-25,Brittany Hohensee,Brittany Hohensee,2340,,39 minutes,Explicit units
+2026-09-25,Jason Hockett,Jason Hockett,1967,,32:47,ASSUMED mm:ss
+2026-09-25,Holly Fatla,Holly Koehn,1491,,24m 51s,Explicit units
+2026-09-25,Mark Hayes,Mark Hayes,1904,,31:44,ASSUMED mm:ss
+2026-09-25,Kelly Householder,Kelly Householder,1055,Account related call via other system,0:17:35,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-28,Jonathan Miles,Jonathan Miles,1200,,20,ASSUMED minutes
+2026-09-28,Taylor Sloan,Taylor Sloan,829,,13:49,ASSUMED mm:ss
+2026-09-29,Katherine Sanchez Perez,Katherine A. Sanchez Perez,5578,,1 hour 32 mint 58 sec,Explicit units
+2026-09-29,Nicole Ozoria Minaya,Nicole Ozoria Minaya,2040,,34 Minutes,Explicit units
+2026-09-29,Katherine Sanchez Perez,Katherine A. Sanchez Perez,5578,,1:32:58,Explicit h:mm:ss
+2026-09-29,Kelly Householder,Kelly Householder,3193,Account related call via other system,0:53:13,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-09-30,Pedro Jimenez Medina,Pedro Jimenez Medina,3600,,1 hour,Explicit units
+2026-09-30,Katherine Sanchez Perez,Katherine A. Sanchez Perez,246,,4 Min 6 seg,Explicit units
+2026-09-30,Katherine Sanchez Perez,Katherine A. Sanchez Perez,279,,4 mnt 39 sec,Explicit units
+2026-09-30,Chyna Elias,Chyna Elias,2563,Account related call via other system,42min 43sec,Explicit units
+2026-09-30,Kelly Householder,Kelly Householder,866,Account related call via other system,0:14:26,"From call-log screenshots supplied by Tim Ramos, Oct 2026"
+2026-10-01,Jasmine McLain,Jasmine McLain,240,,4 min - disconnected with client and it disconnected 8x8 discussion continue with BA,Explicit units
+2026-10-01,Brittany Hohensee,Brittany Hohensee,4380,,1h 13m,Explicit units
+2026-10-01,Donny Dishmey Febles,Donny Dishmey Febles,2637,,43:57,ASSUMED mm:ss
+2026-10-01,Keila Moreno Mercado,Keila Moreno,3480,,58 minutes,Explicit units
+2026-10-01,Chyna Elias,Chyna Elias,2681,Account related call via other system,44min 41sec,Explicit units
+2026-10-01,Chyna Elias,Chyna Elias,797,Account related call via other system,13min 17sec,Explicit units
+2026-10-01,Chyna Elias,Chyna Elias,4380,Account related call via other system,1hr 13min,Explicit units
+2026-10-01,Tina Stone,Tina Stone,258,Account related call via other system,4m 18s,Explicit units
+2026-10-01,Tina Stone,Tina Stone,2896,8x8 Issue,48m 16s,Explicit units
+2026-10-01,Haley Mitchell,Haley Mitchell,1559,Account related call via other system,25:59,ASSUMED mm:ss
+2026-10-01,Lisbeth Cruz Marte,Lisbeth Cruz Marte,3479,Account related call via other system,57m 59s,Explicit units
+2026-10-02,Staci Maples (MAPLES01),Staci Maples,495,Account related call via other system,8 min 15s,Explicit units
+2026-10-02,Erika Hubbard,Erika Hubbard,780,Account related call via other system,13,ASSUMED minutes
+2026-10-02,Katherine Sanchez Perez,Katherine A. Sanchez Perez,345,Account related call via other system,5 min 45 sec,Explicit units
+2026-10-02,Katherine Sanchez Perez,Katherine A. Sanchez Perez,2883,Account related call via other system,48 Min 3 sec,Explicit units
+2026-10-02,Jasmine McLain,Jasmine McLain,401,Account related call via other system,6m 41s,Explicit units
+2026-10-02,Mark Hayes,Mark Hayes,2399,Account related call via other system,39:59,ASSUMED mm:ss
+2026-10-05,Holly Fatla,Holly Koehn,621,Account related call via other system,10m 21s,Explicit units
+2026-10-05,Summer Rima,Summer Rima,1560,Account related call via other system,26,ASSUMED minutes
+2026-10-05,Jason Hockett,Jason Hockett,4199,Account related call via other system,1:09:59,Explicit h:mm:ss
+2026-10-05,William King,Will King,622,Account related call via other system,10:22,ASSUMED mm:ss
+2026-10-05,Staci Maples (MAPLES01),Staci Maples,837,Account related call via other system,13 minutes 57 sec,Explicit units
+2026-10-05,Ruchi Sharma,Ruchi Sharma,900,8x8 Issue,15 mins,Explicit units
+2026-10-06,Lisbeth Cruz Marte,Lisbeth Cruz Marte,2826,8x8 Issue,47 6s,"FLAG missing unit, read as m s"
+2026-10-06,Donny Dishmey Febles,Donny Dishmey Febles,2637,Account related call via other system,43:57,ASSUMED mm:ss
+2026-10-06,Donny Dishmey Febles,Donny Dishmey Febles,689,Account related call via other system,11:29,ASSUMED mm:ss
+2026-10-06,Keila Moreno Mercado,Keila Moreno,2340,Account related call via other system,39 minutes,Explicit units
+2026-10-06,Yenifer Medina Perez,Yenifer Medina,700,Account related call via other system,11 minutes 40 secs,Explicit units
+2026-10-06,Yenifer Medina Perez,Yenifer Medina,420,Account related call via other system,7 min,Explicit units
+2026-10-06,Keila Moreno Mercado,Keila Moreno,3600,Account related call via other system,1 Hour,Explicit units
+2026-10-07,Staci Maples (MAPLES01),Staci Maples,5971,8x8 Issue,1hr 39min 31sec,Explicit units
+2026-10-07,Madison McCaskey,Madison McCaskey,1860,8x8 Issue,31 min,Explicit units
+2026-10-07,Mark Hayes,Mark Hayes,1928,Account related call via other system,32:08,ASSUMED mm:ss
+2026-10-08,Yenifer Medina Perez,Yenifer Medina,960,Account related call via other system,16 min,Explicit units
+2026-10-08,Staci Maples (MAPLES01),Staci Maples,2254,Account related call via other system,37min 34sec,Explicit units
+2026-10-08,Madison McCaskey,Madison McCaskey,2503,Account related call via other system,41:43,ASSUMED mm:ss
+2026-10-08,Mark Hayes,Mark Hayes,1027,Account related call via other system,17:07,ASSUMED mm:ss
+2026-10-09,Ladonna Williams,La'Donna Williams,2160,Account related call via other system,36,ASSUMED minutes
+2026-10-09,Holly Fatla,Holly Koehn,3276,Account related call via other system,54m 36s,Explicit units
+2026-10-09,Lorenz Marsh,Lorenz Marsh,2520,8x8 Issue,42 minutes,Explicit units
+2026-10-12,Teresa Gregorio,Teresa Gregorio,544,Account related call via other system,9m 4s,Explicit units
+2026-10-12,Teresa Gregorio,Teresa Gregorio,1558,Account related call via other system,25m 58s,Explicit units

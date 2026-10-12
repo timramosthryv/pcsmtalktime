@@ -1,0 +1,25 @@
+{
+  "handling": [
+    "handling-aus-Aug.xlsx",
+    "handling-aus-Jul.xlsx",
+    "handling-aus-Oct.xlsx",
+    "handling-aus-Sep.xlsx",
+    "handling-us-Aug.xlsx",
+    "handling-us-Jul.xlsx",
+    "handling-us-Oct.xlsx",
+    "handling-us-Sep.xlsx"
+  ],
+  "adjustments": "adjustments.csv",
+  "roster": "roster.csv",
+  "generated": "2026-10-12",
+  "notes": "handling files are raw 8x8 day-level exports, unmodified. Team and coach come from roster.csv. The exclude list drops coaches, optimizers and anyone not counted as a PCSM.",
+  "exclude": [
+    "Luis Kepis Hernandez",
+    "Julia Cowden",
+    "Julian Komimbin",
+    "Keila Revell",
+    "Dajuana Benson",
+    "Jorge Martinez Suriel",
+    "Luis Ozuna Mercedes"
+  ]
+}

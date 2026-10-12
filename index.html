@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCSM Talk Time</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#f4f6f9; --panel:#fff; --ink:#15213b; --muted:#5d6b85; --line:#dde3ec;
+  --navy:#1f3864; --accent:#0d7d7d; --amber:#b57d00; --red:#b3261e; --green:#1e7a46;
+  --h:#2f5597; --a:#13a0a0; --shadow:0 1px 2px rgba(21,33,59,.06),0 2px 8px rgba(21,33,59,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11161f; --panel:#1a212d; --ink:#e7ecf4; --muted:#9aa8bf; --line:#2b3545;
+    --navy:#8fb0e6; --accent:#3fc0c0; --amber:#e0a93c; --red:#f2857c; --green:#5fcb8e;
+    --h:#5b8dd6; --a:#2fb6b6; --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11161f; --panel:#1a212d; --ink:#e7ecf4; --muted:#9aa8bf; --line:#2b3545;
+  --navy:#8fb0e6; --accent:#3fc0c0; --amber:#e0a93c; --red:#f2857c; --green:#5fcb8e;
+  --h:#5b8dd6; --a:#2fb6b6; --shadow:0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;}
+.wrap{max-width:1500px;margin:0 auto;padding:20px 16px 64px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+h1{margin:0;font-size:22px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input[type=date]{font:inherit;color:var(--ink);background:var(--panel);
+  border:1px solid var(--line);border-radius:7px;padding:7px 11px;cursor:pointer}
+button:hover{border-color:var(--navy)}
+button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+:root[data-theme="dark"] button.primary{color:#11161f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#11161f}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.f label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.f select,.f input{width:100%}
+select[multiple]{height:104px;cursor:default}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.presets button{padding:5px 10px;font-size:12px;border-radius:999px}
+.presets button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
+.kpi .val{font-size:21px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11px;color:var(--muted);margin-top:2px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:0}
+.tabs button{border:none;background:none;border-radius:7px 7px 0 0;padding:9px 14px;color:var(--muted);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child,th.l,td.l{text-align:left}
+thead th{position:sticky;top:0;background:var(--panel);font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);cursor:pointer;z-index:1}
+thead th:hover{color:var(--ink)}
+tbody tr:hover{background:rgba(13,125,125,.06)}
+tfoot td{font-weight:700;border-top:2px solid var(--navy);border-bottom:none}
+.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:9px}
+.chartbox{position:relative;height:330px}
+.pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:600}
+.pill.ok{background:rgba(30,122,70,.13);color:var(--green)}
+.pill.warn{background:rgba(181,125,0,.15);color:var(--amber)}
+.pill.bad{background:rgba(179,38,30,.13);color:var(--red)}
+.pill.gray{background:var(--line);color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:11px;padding:28px;text-align:center;color:var(--muted)}
+.drop.hot{border-color:var(--accent);background:rgba(13,125,125,.06)}
+.msg{padding:10px 13px;border-radius:9px;font-size:13px;margin-bottom:12px}
+.msg.err{background:rgba(179,38,30,.1);color:var(--red);border:1px solid rgba(179,38,30,.3)}
+.msg.info{background:rgba(47,85,151,.08);color:var(--h);border:1px solid var(--line)}
+.hide{display:none!important}
+.hint{font-size:12px;color:var(--muted);margin:2px 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+h3{margin:0 0 2px;font-size:15px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
+@keyframes s{to{transform:rotate(360deg)}}
+code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>PCSM Talk Time</h1>
+    <div class="sub">8x8 handling time plus approved Asana talk time adjustments &middot; <span id="covers">loading…</span></div>
+  </div>
+  <div class="btns">
+    <button id="themeBtn" title="Toggle light and dark">&#9680;</button>
+    <button id="upBtn">Upload files</button>
+    <button id="expBtn">Export view</button>
+    <button id="reloadBtn" class="primary">Reload data</button>
+  </div>
+</header>
+
+<div id="status" class="msg info"><span class="spin"></span> Loading data…</div>
+
+<div id="dropPanel" class="panel hide">
+  <div class="drop" id="drop">
+    <strong>Drop files here, or click to browse</strong>
+    <div class="hint" style="margin-top:6px">
+      Raw 8x8 day exports (<code>.xlsx</code>), <code>adjustments.csv</code>, <code>roster.csv</code>.
+      Normally these load automatically from the repo's <code>data</code> folder.
+    </div>
+    <input type="file" id="file" multiple accept=".xlsx,.xls,.csv" class="hide">
+  </div>
+</div>
+
+<div class="panel" id="filterPanel">
+  <div class="filters">
+    <div class="f"><label>From</label><input type="date" id="from"></div>
+    <div class="f"><label>To</label><input type="date" id="to"></div>
+    <div class="f"><label>Group periods by</label>
+      <select id="gran"><option value="day">Day</option><option value="week">Week</option>
+        <option value="month" selected>Month</option><option value="quarter">Quarter</option></select></div>
+    <div class="f"><label>Coach</label><select id="fCoach" multiple></select></div>
+    <div class="f"><label>Team</label><select id="fTeam" multiple></select></div>
+    <div class="f"><label>Status</label><select id="fStatus" multiple></select></div>
+    <div class="f"><label>Agent</label><select id="fAgent" multiple></select></div>
+  </div>
+  <div class="presets" id="presets"></div>
+  <div class="hint" style="margin:10px 0 0">
+    Nothing selected in a list means all. Ctrl or Cmd click to pick several. Weekends with no recorded activity are excluded automatically.
+  </div>
+</div>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="tabs" id="tabs"></div>
+<div class="panel" style="border-top-left-radius:0;border-top-right-radius:0">
+
+  <div id="v-trend">
+    <h3>Adjusted talk time by period</h3>
+    <div class="hint">Stacked: 8x8 handling time plus Asana adjustments. Hover for detail.</div>
+    <div class="chartbox"><canvas id="chart1"></canvas></div>
+    <h3 style="margin-top:22px">Period breakdown</h3>
+    <div class="hint">Click any column heading to sort.</div>
+    <div class="scroll"><table id="t-period"></table></div>
+  </div>
+
+  <div id="v-agent" class="hide">
+    <h3>By CSM</h3>
+    <div class="hint">Average per active day is adjusted talk time divided by days with any recorded handling time.</div>
+    <div class="scroll"><table id="t-agent"></table></div>
+  </div>
+
+  <div id="v-coach" class="hide">
+    <h3>By coach</h3>
+    <div class="hint">Comparable on average per active day rather than total, since team sizes differ.</div>
+    <div class="grid2" style="margin-bottom:16px">
+      <div><div class="chartbox" style="height:280px"><canvas id="chart2"></canvas></div></div>
+      <div><div class="chartbox" style="height:280px"><canvas id="chart3"></canvas></div></div>
+    </div>
+    <div class="scroll"><table id="t-coach"></table></div>
+  </div>
+
+  <div id="v-adj" class="hide">
+    <h3>Asana adjustment records</h3>
+    <div class="hint">
+      <span class="pill ok">literal</span> converted exactly as written &nbsp;
+      <span class="pill warn">assumed</span> needed an interpretation &nbsp;
+      <span class="pill bad">unusable</span> could not be converted
+    </div>
+    <div class="scroll"><table id="t-adj"></table></div>
+  </div>
+
+  <div id="v-dq" class="hide">
+    <h3>Data quality</h3>
+    <div class="hint">Checks that run on every load. Anything red should be resolved before the numbers are quoted.</div>
+    <div class="scroll"><table id="t-dq"></table></div>
+  </div>
+
+</div>
+
+<div class="sub" style="text-align:center;margin-top:8px">
+  Handling Time only &middot; Processing and Busy are roll-ups that already contain Handling and would double count &middot;
+  Adjustments reflect submission in Asana, not approval
+</div>
+</div>
+
+<script>
+/* ============================ data source ============================ */
+/*  DEFAULT: index.html sits in the same repo as the data folder and is served
+    by GitHub Pages. Relative paths work, nothing to configure.
+
+    HOSTING index.html SOMEWHERE ELSE (local file, SharePoint, another site)?
+    Point DATA_BASE at the raw GitHub URL for your data folder:
+
+      const DATA_BASE =
+        'https://raw.githubusercontent.com/<user>/<repo>/main/data/';
+
+    raw.githubusercontent.com allows cross-origin reads, so this works from
+    anywhere. The repo must be public; a private repo would need a token in
+    the page, which you should not do.                                       */
+const DATA_BASE = './data/';
+/* ============================ state ============================ */
+const S={handling:[],adj:[],roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
+         sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1]}};
+const $=id=>document.getElementById(id);
+const EXCEL_EPOCH=Date.UTC(1899,11,30);
+
+/* ============================ helpers ============================ */
+function serialToISO(n){
+  const d=new Date(EXCEL_EPOCH+Math.floor(n)*86400000);
+  return d.toISOString().slice(0,10);
+}
+function cellDate(v){
+  if(v==null||v==='')return null;
+  if(typeof v==='number')return serialToISO(v);
+  if(v instanceof Date)return new Date(Date.UTC(v.getFullYear(),v.getMonth(),v.getDate())).toISOString().slice(0,10);
+  const s=String(v).trim();
+  let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m)return `${m[1]}-${m[2]}-${m[3]}`;
+  m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m)return `${m[3]}-${String(m[1]).padStart(2,'0')}-${String(m[2]).padStart(2,'0')}`;
+  const d=new Date(s); return isNaN(d)?null:d.toISOString().slice(0,10);
+}
+function cellSeconds(v){
+  if(v==null||v==='')return 0;
+  if(typeof v==='number')return Math.round(v*86400);
+  const s=String(v).trim();
+  const p=s.split(':').map(Number);
+  if(p.length===3&&p.every(x=>!isNaN(x)))return p[0]*3600+p[1]*60+p[2];
+  if(p.length===2&&p.every(x=>!isNaN(x)))return p[0]*60+p[1];
+  const n=Number(s); return isNaN(n)?0:Math.round(n*86400);
+}
+const hms=s=>{s=Math.round(s||0);const n=s<0?'-':'';s=Math.abs(s);
+  return n+Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+const hrs=s=>(s/3600).toFixed(1);
+const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'–';
+const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function periodKey(iso,g){
+  const [y,m,d]=iso.split('-').map(Number);
+  if(g==='day')return iso;
+  if(g==='month')return `${y}-${String(m).padStart(2,'0')}`;
+  if(g==='quarter')return `${y} Q${Math.floor((m-1)/3)+1}`;
+  const dt=new Date(Date.UTC(y,m-1,d)), dow=(dt.getUTCDay()+6)%7;
+  dt.setUTCDate(dt.getUTCDate()-dow);
+  return 'wk '+dt.toISOString().slice(0,10);
+}
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function periodLabel(k,g){
+  if(g==='month'){const[y,m]=k.split('-');return MON[+m-1]+' '+y;}
+  if(g==='day'){const[y,m,d]=k.split('-');return `${MON[+m-1]} ${+d}`;}
+  return k;
+}
+const confClass=c=>{c=String(c||'');
+  if(/^UNPARS/i.test(c))return['bad','unusable'];
+  if(/^(ASSUMED|FLAG)/i.test(c))return['warn','assumed'];
+  return['ok','literal'];};
+
+/* ============================ parsing ============================ */
+function parseHandling(wb,fname){
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+  let hi=-1;
+  for(let i=0;i<Math.min(rows.length,40);i++){
+    const t=(rows[i]||[]).map(x=>String(x==null?'':x).toLowerCase());
+    if(t.some(x=>x==='agent')&&t.some(x=>x.includes('handling'))){hi=i;break;}
+  }
+  if(hi<0){S.warn.push(`${fname}: could not find a header row containing Agent and Handling Time`);return 0;}
+  const H=(rows[hi]||[]).map(x=>String(x==null?'':x).trim().toLowerCase());
+  const ci=n=>H.findIndex(x=>x===n||x.startsWith(n));
+  const cStart=ci('start time'),cGroup=ci('group'),cAgent=ci('agent'),
+        cId=H.findIndex(x=>x.includes('agent id')),cHand=H.findIndex(x=>x.includes('handling'));
+  if(cStart<0||cAgent<0||cHand<0){S.warn.push(`${fname}: missing Start Time, Agent or Handling Time column`);return 0;}
+  let n=0;
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i]; if(!r)continue;
+    const a=r[cAgent]; const first=String(r[0]==null?'':r[0]);
+    if(/subtotal|^total$/i.test(first))continue;
+    if(!a||String(a).trim()==='')continue;
+    const iso=cellDate(r[cStart]); if(!iso)continue;
+    S.handling.push({date:iso,agent:String(a).trim(),
+      group:cGroup>=0?String(r[cGroup]||'').trim():'',
+      agentId:cId>=0?String(r[cId]||'').trim():'',
+      sec:cellSeconds(r[cHand]),src:fname});
+    n++;
+  }
+  return n;
+}
+function csvRows(text){
+  const out=[];let row=[],cur='',q=false;
+  text=text.replace(/^﻿/,'');
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else if(c==='"')q=true;
+    else if(c===','){row.push(cur);cur='';}
+    else if(c==='\n'){row.push(cur);cur='';out.push(row);row=[];}
+    else if(c!=='\r')cur+=c;
+  }
+  if(cur!==''||row.length){row.push(cur);out.push(row);}
+  return out.filter(r=>r.some(x=>String(x).trim()!==''));
+}
+function parseCSV(text){
+  const rows=csvRows(text); if(!rows.length)return[];
+  const H=rows[0].map(x=>String(x).trim().toLowerCase());
+  return rows.slice(1).map(r=>{const o={};H.forEach((h,i)=>o[h]=r[i]==null?'':String(r[i]).trim());return o;});
+}
+function loadRoster(objs){
+  objs.forEach(o=>{
+    if(!o.agent)return;
+    S.roster.set(o.agent,{agent:o.agent,coach:o.coach||'Unassigned',manager:o.manager||'',
+      team:o.team||'',group:o.group||'',status:o.status||'Active',
+      asana:o.asana_name||o.agent,agentId:o.agent_id||''});
+  });
+}
+function loadAdj(objs){
+  objs.forEach(o=>{
+    const iso=cellDate(o.date); if(!iso||!o.agent)return;
+    S.adj.push({date:iso,agent:o.agent,asana:o.asana_csm||'',
+      sec:o.seconds===''?null:Number(o.seconds),
+      reason:o.reason||'',text:o.length_text||'',conf:o.confidence||''});
+  });
+}
+
+/* ============================ loading ============================ */
+async function loadFromRepo(){
+  S.handling=[];S.adj=[];S.roster=new Map();S.files=[];S.warn=[];
+  const man=await fetch(DATA_BASE+'manifest.json',{cache:'no-store'}).then(r=>{
+    if(!r.ok)throw new Error('manifest.json not found at '+DATA_BASE+' ('+r.status+')');return r.json();});
+  const rosterFile=man.roster||'roster.csv', adjFile=man.adjustments||'adjustments.csv';
+  const rt=await fetch(DATA_BASE+rosterFile,{cache:'no-store'});
+  if(!rt.ok)throw new Error(rosterFile+' not found');
+  loadRoster(parseCSV(await rt.text())); S.files.push(rosterFile);
+  const at=await fetch(DATA_BASE+adjFile,{cache:'no-store'});
+  if(at.ok){loadAdj(parseCSV(await at.text()));S.files.push(adjFile);}
+  else S.warn.push(adjFile+' not found, so no adjustments are applied');
+  for(const f of (man.handling||[])){
+    const r=await fetch(DATA_BASE+f,{cache:'no-store'});
+    if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
+    const n=parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
+    S.files.push(`${f} (${n} rows)`);
+  }
+  S.exclude=man.exclude||[];
+  applyExclusions();
+  if(!S.handling.length)throw new Error('No handling rows were parsed from any file listed in the manifest.');
+}
+function applyExclusions(){
+  const ex=new Set(S.exclude); S.excluded=new Map();
+  if(!ex.size)return;
+  const keep=[];
+  S.handling.forEach(h=>{
+    if(ex.has(h.agent)){
+      const e=S.excluded.get(h.agent)||{rows:0,sec:0}; e.rows++; e.sec+=h.sec; S.excluded.set(h.agent,e);
+    } else keep.push(h);
+  });
+  S.handling=keep;
+  S.adj=S.adj.filter(a=>!ex.has(a.agent));
+}
+async function loadFromFiles(list){
+  S.handling=[];S.adj=[];S.roster=new Map();S.files=[];S.warn=[];
+  const arr=[...list], csvs=arr.filter(f=>/\.csv$/i.test(f.name));
+  for(const f of csvs){
+    const txt=await f.text(), objs=parseCSV(txt), h=Object.keys(objs[0]||{});
+    if(h.includes('coach')||h.includes('roster')){loadRoster(objs);S.files.push(f.name+' (roster)');}
+    else if(h.includes('seconds')||h.includes('length_text')){loadAdj(objs);S.files.push(f.name+' (adjustments)');}
+    else S.warn.push(f.name+': not recognised as roster or adjustments, ignored');
+  }
+  for(const f of arr.filter(f=>/\.xlsx?$/i.test(f.name))){
+    const n=parseHandling(XLSX.read(new Uint8Array(await f.arrayBuffer()),{type:'array'}),f.name);
+    S.files.push(`${f.name} (${n} rows)`);
+  }
+  if(!S.roster.size)S.warn.push('No roster.csv supplied, so coach, team and status are unknown for every agent.');
+  applyExclusions();
+  if(!S.handling.length)throw new Error('No handling rows were parsed from the files you supplied.');
+}
+
+/* ============================ model ============================ */
+function meta(a){
+  return S.roster.get(a)||{agent:a,coach:'Unassigned',manager:'',team:'Unknown',group:'',status:'Active',asana:a};
+}
+function buildRows(){
+  const key=(a,d)=>a+'\u0000'+d, m=new Map();
+  S.handling.forEach(h=>{
+    const k=key(h.agent,h.date);
+    if(!m.has(k))m.set(k,{agent:h.agent,date:h.date,hand:0,adj:0,n:0,group:h.group});
+    const r=m.get(k); r.hand+=h.sec; if(h.group&&!r.group)r.group=h.group;
+  });
+  S.adj.forEach(a=>{
+    const k=key(a.agent,a.date);
+    if(!m.has(k))m.set(k,{agent:a.agent,date:a.date,hand:0,adj:0,n:0,group:''});
+    const r=m.get(k); r.adj+=(a.sec||0); r.n++;
+  });
+  return [...m.values()].map(r=>{const md=meta(r.agent);
+    return {...r,coach:md.coach,team:md.team,status:md.status,
+            group:r.group||md.group,total:r.hand+r.adj,active:r.hand>0?1:0};});
+}
+function selected(id){return [...$(id).selectedOptions].map(o=>o.value);}
+function filtered(){
+  const f=$('from').value,t=$('to').value;
+  const C=selected('fCoach'),T=selected('fTeam'),St=selected('fStatus'),A=selected('fAgent');
+  return S.rows.filter(r=>
+    (!f||r.date>=f)&&(!t||r.date<=t)&&
+    (!C.length||C.includes(r.coach))&&(!T.length||T.includes(r.team))&&
+    (!St.length||St.includes(r.status))&&(!A.length||A.includes(r.agent)));
+}
+function rollup(rows,keyFn){
+  const m=new Map();
+  rows.forEach(r=>{const k=keyFn(r);
+    if(!m.has(k))m.set(k,{key:k,hand:0,adj:0,days:0,recs:0,agents:new Set()});
+    const o=m.get(k);o.hand+=r.hand;o.adj+=r.adj;o.days+=r.active;o.recs+=r.n;o.agents.add(r.agent);});
+  return [...m.values()].map(o=>({...o,adjusted:o.hand+o.adj,nAgents:o.agents.size,
+    avg:o.days?(o.hand+o.adj)/o.days:0}));
+}
+
+/* ============================ render ============================ */
+function sortBy(list,[k,dir]){
+  return list.slice().sort((a,b)=>{
+    const x=a[k],y=b[k];
+    if(typeof x==='string'||typeof y==='string')
+      return String(x).localeCompare(String(y))*dir;
+    return ((x||0)-(y||0))*dir;
+  });
+}
+function table(el,cols,rows,key,foot){
+  const [sk,sd]=S.sort[key];
+  el.innerHTML='<thead><tr>'+cols.map(c=>
+    `<th class="${c.l?'l':''}" data-k="${c.k}">${esc(c.t)}${c.k===sk?(sd>0?' ▲':' ▼'):''}</th>`).join('')+'</tr></thead>'+
+    '<tbody>'+rows.map(r=>'<tr>'+cols.map(c=>
+      `<td class="${c.l?'l':''}">${c.f(r)}</td>`).join('')+'</tr>').join('')+'</tbody>'+
+    (foot?'<tfoot><tr>'+cols.map(c=>`<td class="${c.l?'l':''}">${c.ft?c.ft(foot):''}</td>`).join('')+'</tr></tfoot>':'');
+  el.querySelectorAll('th').forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k; S.sort[key]=[k,S.sort[key][0]===k?-S.sort[key][1]:-1]; render();});
+}
+let charts={};
+function drawChart(id,cfg){
+  if(charts[id])charts[id].destroy();
+  const c=$(id); if(!c)return;
+  const css=getComputedStyle(document.body);
+  Chart.defaults.color=css.getPropertyValue('--muted').trim();
+  Chart.defaults.borderColor=css.getPropertyValue('--line').trim();
+  Chart.defaults.font.family='-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif';
+  charts[id]=new Chart(c,cfg);
+}
+function render(){
+  const rows=filtered(), g=$('gran').value;
+  const css=getComputedStyle(document.body);
+  const cH=css.getPropertyValue('--h').trim(), cA=css.getPropertyValue('--a').trim();
+
+  /* KPIs */
+  const tot=rollup(rows,()=> 'all')[0]||{hand:0,adj:0,days:0,recs:0,adjusted:0,avg:0,nAgents:0};
+  const dates=rows.filter(r=>r.hand>0).map(r=>r.date).sort();
+  $('kpis').innerHTML=[
+    ['Adjusted talk time',hms(tot.adjusted),hrs(tot.adjusted)+' hours'],
+    ['8x8 handling',hms(tot.hand),pct(tot.hand,tot.adjusted)+' of total'],
+    ['Asana adjustments',hms(tot.adj),tot.recs+' record'+(tot.recs===1?'':'s')],
+    ['Adjustment share',pct(tot.adj,tot.adjusted),'of adjusted talk time'],
+    ['Active agent-days',tot.days.toLocaleString(),tot.nAgents+' CSMs'],
+    ['Average per active day',hms(tot.avg),'per day present']
+  ].map(([l,v,n])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
+  $('covers').textContent=dates.length?`${dates[0]} to ${dates[dates.length-1]} · ${tot.nAgents} CSMs`:'no rows in the current selection';
+
+  /* trend */
+  const per=sortBy(rollup(rows,r=>periodKey(r.date,g)),S.sort.period);
+  const chron=rollup(rows,r=>periodKey(r.date,g)).sort((a,b)=>a.key.localeCompare(b.key));
+  drawChart('chart1',{type:'bar',data:{labels:chron.map(p=>periodLabel(p.key,g)),
+    datasets:[{label:'8x8 handling',data:chron.map(p=>p.hand/3600),backgroundColor:cH,borderRadius:3},
+              {label:'Asana adjustments',data:chron.map(p=>p.adj/3600),backgroundColor:cA,borderRadius:3}]},
+    options:{maintainAspectRatio:false,responsive:true,
+      scales:{x:{stacked:true,grid:{display:false}},
+              y:{stacked:true,title:{display:true,text:'Hours'},ticks:{callback:v=>v.toLocaleString()}}},
+      plugins:{legend:{position:'bottom'},tooltip:{callbacks:{
+        label:c=>c.dataset.label+': '+hms(c.raw*3600),
+        footer:it=>'Total: '+hms(it.reduce((s,x)=>s+x.raw*3600,0))}}}}});
+  const pc=[{k:'key',t:'Period',l:1,f:r=>esc(periodLabel(r.key,g)),ft:()=>'Total'},
+    {k:'nAgents',t:'CSMs',f:r=>r.nAgents,ft:f=>f.nAgents},
+    {k:'hand',t:'Handling',f:r=>hms(r.hand),ft:f=>hms(f.hand)},
+    {k:'adj',t:'Adjustments',f:r=>hms(r.adj),ft:f=>hms(f.adj)},
+    {k:'adjusted',t:'Adjusted talk time',f:r=>hms(r.adjusted),ft:f=>hms(f.adjusted)},
+    {k:'adjusted',t:'Hours',f:r=>hrs(r.adjusted),ft:f=>hrs(f.adjusted)},
+    {k:'adj',t:'Adj share',f:r=>pct(r.adj,r.adjusted),ft:f=>pct(f.adj,f.adjusted)},
+    {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
+    {k:'avg',t:'Avg / active day',f:r=>hms(r.avg),ft:f=>hms(f.avg)},
+    {k:'recs',t:'Adj records',f:r=>r.recs,ft:f=>f.recs}];
+  table($('t-period'),pc,per,'period',tot);
+
+  /* by agent */
+  const ag=sortBy(rollup(rows,r=>r.agent),S.sort.agent).map(r=>{const m=meta(r.key);return{...r,...m,agent:r.key};});
+  table($('t-agent'),[
+    {k:'agent',t:'CSM',l:1,f:r=>esc(r.agent),ft:()=>'Total'},
+    {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:f=>f.nAgents+' CSMs'},
+    {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
+    {k:'status',t:'Status',l:1,f:r=>r.status==='Active'?'<span class="pill ok">Active</span>':`<span class="pill gray">${esc(r.status)}</span>`},
+    {k:'hand',t:'Handling',f:r=>hms(r.hand),ft:f=>hms(f.hand)},
+    {k:'adj',t:'Adjustments',f:r=>hms(r.adj),ft:f=>hms(f.adj)},
+    {k:'adjusted',t:'Adjusted talk time',f:r=>hms(r.adjusted),ft:f=>hms(f.adjusted)},
+    {k:'adjusted',t:'Hours',f:r=>hrs(r.adjusted),ft:f=>hrs(f.adjusted)},
+    {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
+    {k:'avg',t:'Avg / active day',f:r=>hms(r.avg),ft:f=>hms(f.avg)},
+    {k:'recs',t:'Adj records',f:r=>r.recs,ft:f=>f.recs}],ag,'agent',tot);
+
+  /* by coach */
+  const co=sortBy(rollup(rows,r=>r.coach),S.sort.coach);
+  const coC=rollup(rows,r=>r.coach).sort((a,b)=>b.adjusted-a.adjusted);
+  drawChart('chart2',{type:'bar',data:{labels:coC.map(c=>c.key),
+    datasets:[{label:'Adjusted talk time (hours)',data:coC.map(c=>c.adjusted/3600),backgroundColor:cH,borderRadius:3}]},
+    options:{maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},title:{display:true,text:'Total adjusted talk time'},
+        tooltip:{callbacks:{label:c=>hms(c.raw*3600)}}},
+      scales:{x:{title:{display:true,text:'Hours'}},y:{grid:{display:false}}}}});
+  const coA=rollup(rows,r=>r.coach).sort((a,b)=>b.avg-a.avg);
+  drawChart('chart3',{type:'bar',data:{labels:coA.map(c=>c.key),
+    datasets:[{label:'Average per active day (hours)',data:coA.map(c=>c.avg/3600),backgroundColor:cA,borderRadius:3}]},
+    options:{maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},title:{display:true,text:'Average per active day'},
+        tooltip:{callbacks:{label:c=>hms(c.raw*3600)}}},
+      scales:{x:{title:{display:true,text:'Hours'}},y:{grid:{display:false}}}}});
+  table($('t-coach'),[
+    {k:'key',t:'Coach',l:1,f:r=>esc(r.key),ft:()=>'Total'},
+    {k:'nAgents',t:'CSMs',f:r=>r.nAgents,ft:f=>f.nAgents},
+    {k:'hand',t:'Handling',f:r=>hms(r.hand),ft:f=>hms(f.hand)},
+    {k:'adj',t:'Adjustments',f:r=>hms(r.adj),ft:f=>hms(f.adj)},
+    {k:'adjusted',t:'Adjusted talk time',f:r=>hms(r.adjusted),ft:f=>hms(f.adjusted)},
+    {k:'adjusted',t:'Hours',f:r=>hrs(r.adjusted),ft:f=>hrs(f.adjusted)},
+    {k:'adj',t:'Adj share',f:r=>pct(r.adj,r.adjusted),ft:f=>pct(f.adj,f.adjusted)},
+    {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
+    {k:'avg',t:'Avg / active day',f:r=>hms(r.avg),ft:f=>hms(f.avg)},
+    {k:'recs',t:'Adj records',f:r=>r.recs,ft:f=>f.recs}],co,'coach',tot);
+
+  /* adjustments */
+  const f=$('from').value,t=$('to').value;
+  const C=selected('fCoach'),T=selected('fTeam'),St=selected('fStatus'),A=selected('fAgent');
+  const arows=sortBy(S.adj.filter(a=>{const m=meta(a.agent);
+      return (!f||a.date>=f)&&(!t||a.date<=t)&&(!C.length||C.includes(m.coach))&&
+             (!T.length||T.includes(m.team))&&(!St.length||St.includes(m.status))&&
+             (!A.length||A.includes(a.agent));})
+    .map(a=>({...a,coach:meta(a.agent).coach})),S.sort.adj);
+  table($('t-adj'),[
+    {k:'date',t:'Date',l:1,f:r=>esc(r.date),ft:()=>'Total'},
+    {k:'agent',t:'CSM',l:1,f:r=>esc(r.agent),ft:f=>arows.length+' records'},
+    {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach)},
+    {k:'reason',t:'Why not in 8x8',l:1,f:r=>esc(r.reason)},
+    {k:'text',t:'Length of call, as entered',l:1,f:r=>'<code>'+esc(r.text)+'</code>'},
+    {k:'sec',t:'Applied',f:r=>r.sec==null?'–':hms(r.sec),ft:()=>hms(arows.reduce((s,r)=>s+(r.sec||0),0))},
+    {k:'conf',t:'Confidence',l:1,f:r=>{const[c,l]=confClass(r.conf);return `<span class="pill ${c}">${l}</span> <span class="sub">${esc(r.conf)}</span>`;}}
+  ],arows,'adj',{});
+
+  /* data quality */
+  const dq=[];
+  const noRoster=[...new Set(S.handling.map(h=>h.agent))].filter(a=>!S.roster.has(a));
+  const noCoach=[...S.roster.values()].filter(r=>!r.coach||r.coach==='Unassigned').map(r=>r.agent);
+  const orphanAdj=[...new Set(S.adj.filter(a=>!S.roster.has(a.agent)).map(a=>a.agent))];
+  const assumed=S.adj.filter(a=>/^(ASSUMED|FLAG)/i.test(a.conf)).length;
+  const unusable=S.adj.filter(a=>/^UNPARS/i.test(a.conf)||a.sec==null).length;
+  const dupe=(()=>{const m=new Map();S.handling.forEach(h=>{const k=h.agent+h.date;m.set(k,(m.get(k)||0)+1);});
+    return [...m.values()].filter(v=>v>1).length;})();
+  dq.push(['Handling rows parsed',S.handling.length,'ok','From '+(S.files.filter(f=>/rows\)/.test(f)).length)+' export file(s)']);
+  if(S.exclude.length){
+    const det=[...S.excluded.entries()].map(([n,e])=>`${n} (${e.rows} row${e.rows===1?'':'s'}, ${hms(e.sec)})`).join('; ');
+    dq.push(['Agents excluded by manifest',S.exclude.length,'ok',
+      'Deliberately left out of every figure. '+(det||'None of them appear in the current files.')+
+      ' Edit the "exclude" list in data/manifest.json to change this.']);
+  }
+  dq.push(['Agents in 8x8 but missing from roster.csv',noRoster.length,noRoster.length?'bad':'ok',
+    noRoster.length?'Coach, team and status unknown: '+noRoster.slice(0,6).join(', ')+(noRoster.length>6?' …':''):'Every agent is on the roster']);
+  dq.push(['Roster agents with no coach',noCoach.length,noCoach.length?'warn':'ok',
+    noCoach.length?noCoach.slice(0,6).join(', '):'Every CSM maps to a coach']);
+  dq.push(['Adjustment records for an unknown agent',orphanAdj.length,orphanAdj.length?'bad':'ok',
+    orphanAdj.length?'Not counted anywhere: '+orphanAdj.join(', '):'All adjustments join to a roster agent']);
+  dq.push(['Adjustments needing an assumed duration',assumed,assumed?'warn':'ok',
+    'The "Length of call" field in Asana is free text. A validated duration field would remove this.']);
+  dq.push(['Adjustments that could not be converted',unusable,unusable?'bad':'ok',
+    unusable?'Excluded from all totals. See the Adjustments tab for the raw text.':'All records converted']);
+  dq.push(['Duplicate agent-day rows in the 8x8 files',dupe,dupe?'bad':'ok',
+    dupe?'The same agent and date appears in more than one export, which double counts. Check for overlapping date ranges.':'No agent-day appears twice']);
+  S.warn.forEach(w=>dq.push(['Load warning','','warn',w]));
+  $('t-dq').innerHTML='<thead><tr><th class="l">Check</th><th>Count</th><th class="l">Result</th><th class="l">Detail</th></tr></thead><tbody>'+
+    dq.map(([c,n,s,d])=>`<tr><td class="l">${esc(c)}</td><td>${n===''?'':n}</td>
+      <td class="l"><span class="pill ${s}">${s==='ok'?'pass':s==='warn'?'review':'fix'}</span></td>
+      <td class="l" style="white-space:normal">${esc(d)}</td></tr>`).join('')+'</tbody>';
+}
+
+/* ============================ filters / ui ============================ */
+function fillSelect(id,vals,keep){
+  const el=$(id),prev=new Set(keep||selected(id));
+  el.innerHTML=vals.map(v=>`<option value="${esc(v)}"${prev.has(v)?' selected':''}>${esc(v)}</option>`).join('');
+}
+function initFilters(){
+  S.rows=buildRows();
+  const u=k=>[...new Set(S.rows.map(r=>r[k]).filter(Boolean))].sort();
+  fillSelect('fCoach',u('coach'));fillSelect('fTeam',u('team'));
+  fillSelect('fStatus',u('status'));fillSelect('fAgent',u('agent'));
+  const ds=S.rows.map(r=>r.date).sort();
+  if(!$('from').value){$('from').value=ds[0];$('to').value=ds[ds.length-1];}
+  const months=[...new Set(ds.map(d=>d.slice(0,7)))].sort();
+  const qs=[...new Set(ds.map(d=>{const m=+d.slice(5,7);return d.slice(0,4)+' Q'+(Math.floor((m-1)/3)+1);}))].sort();
+  const P=[['All data',ds[0],ds[ds.length-1],'month']];
+  qs.forEach(q=>{const[y,qq]=q.split(' Q');const s=(qq-1)*3;
+    P.push([q,`${y}-${String(s+1).padStart(2,'0')}-01`,
+      new Date(Date.UTC(+y,s+3,0)).toISOString().slice(0,10),'month']);});
+  months.slice(-4).forEach(m=>{const[y,mm]=m.split('-');
+    P.push([MON[+mm-1]+' '+y,m+'-01',new Date(Date.UTC(+y,+mm,0)).toISOString().slice(0,10),'day']);});
+  const last=ds[ds.length-1];
+  [[7,'Last 7 days'],[30,'Last 30 days']].forEach(([n,lab])=>{
+    const d=new Date(last+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-n+1);
+    P.push([lab,d.toISOString().slice(0,10),last,'day']);});
+  $('presets').innerHTML=P.map((p,i)=>`<button data-i="${i}">${esc(p[0])}</button>`).join('');
+  $('presets').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    const p=P[+b.dataset.i];$('from').value=p[1];$('to').value=p[2];$('gran').value=p[3];
+    $('presets').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');render();});
+}
+const TABS=[['trend','Trend & breakdown'],['agent','By CSM'],['coach','By coach'],
+            ['adj','Adjustments'],['dq','Data quality']];
+$('tabs').innerHTML=TABS.map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+function setTab(k){
+  S.view=k;
+  $('tabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+  TABS.forEach(([t])=>$('v-'+t).classList.toggle('hide',t!==k));
+  render();
+}
+$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>setTab(b.dataset.k));
+
+function msg(kind,html){const el=$('status');el.className='msg '+kind;el.innerHTML=html;el.classList.remove('hide');}
+async function boot(fromFiles){
+  msg('info','<span class="spin"></span> Loading from <code>'+esc(DATA_BASE)+'</code>…');
+  try{
+    fromFiles?await loadFromFiles(fromFiles):await loadFromRepo();
+    initFilters();setTab(S.view);
+    const bad=S.warn.length;
+    msg(bad?'err':'info',
+      `Loaded ${S.handling.length.toLocaleString()} handling rows, ${S.adj.length} adjustment records, ${S.roster.size} CSMs on the roster.`+
+      ` <span class="sub">${esc(DATA_BASE)} · ${esc(S.files.join(' · '))}</span>`+
+      (bad?`<br><strong>${bad} warning${bad===1?'':'s'}</strong> — see the Data quality tab.`:''));
+    $('dropPanel').classList.add('hide');
+  }catch(e){
+    msg('err','<strong>Could not load data.</strong> '+esc(e.message)+
+      '<br>Checked <code>'+esc(DATA_BASE)+'</code>. Use <strong>Upload files</strong> to load an 8x8 export, '+
+      '<code>adjustments.csv</code> and <code>roster.csv</code> by hand instead.');
+    $('dropPanel').classList.remove('hide');
+  }
+}
+['from','to','gran','fCoach','fTeam','fStatus','fAgent'].forEach(id=>{
+  $(id).addEventListener('change',()=>{
+    if(['from','to'].includes(id))$('presets').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    render();});
+});
+$('reloadBtn').onclick=()=>boot();
+$('upBtn').onclick=()=>{$('dropPanel').classList.toggle('hide');};
+$('drop').onclick=()=>$('file').click();
+$('file').onchange=e=>{if(e.target.files.length)boot(e.target.files);};
+['dragenter','dragover'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.add('hot');}));
+['dragleave','drop'].forEach(ev=>$('drop').addEventListener(ev,e=>{e.preventDefault();$('drop').classList.remove('hot');}));
+$('drop').addEventListener('drop',e=>{if(e.dataTransfer.files.length)boot(e.dataTransfer.files);});
+$('themeBtn').onclick=()=>{
+  const cur=document.documentElement.getAttribute('data-theme');
+  const next=cur==='dark'?'light':cur==='light'?'dark':
+    (matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark');
+  document.documentElement.setAttribute('data-theme',next);
+  try{localStorage.setItem('tt-theme',next);}catch(_){}
+  render();
+};
+try{const t=localStorage.getItem('tt-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(_){}
+$('expBtn').onclick=()=>{
+  const tbl=({trend:'t-period',agent:'t-agent',coach:'t-coach',adj:'t-adj',dq:'t-dq'})[S.view];
+  const rows=[...$(tbl).querySelectorAll('tr')].map(tr=>
+    [...tr.children].map(td=>{
+      const t=td.textContent.replace(/[▲▼]/g,'').trim();
+      return /[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t;}).join(','));
+  const url=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
+  const a=document.createElement('a');
+  a.href=url;a.download=`pcsm-talk-time-${S.view}-${$('from').value}-to-${$('to').value}.csv`;a.click();
+  URL.revokeObjectURL(url);
+};
+boot();
+</script>
+</body>
+</html>
