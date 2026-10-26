@@ -11,7 +11,7 @@
   ],
   "adjustments": "adjustments.csv",
   "roster": "roster.csv",
-  "generated": "2026-10-12",
+  "generated": "2026-10-26",
   "notes": "handling files are raw 8x8 day-level exports, unmodified. Team and coach come from roster.csv. The exclude list drops coaches, optimizers and anyone not counted as a PCSM.",
   "exclude": [
     "Luis Kepis Hernandez",
@@ -21,5 +21,9 @@
     "Dajuana Benson",
     "Jorge Martinez Suriel",
     "Luis Ozuna Mercedes"
+  ],
+  "interactions": [
+    "interactions-aus-Oct.xlsx",
+    "interactions-us-Oct.xlsx"
   ]
 }
