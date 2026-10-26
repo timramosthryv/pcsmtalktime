@@ -170,6 +170,34 @@ code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px}
     <div class="scroll"><table id="t-adj"></table></div>
   </div>
 
+  <div id="v-inter" class="hide">
+    <h3>Offers accepted and rejected</h3>
+    <div class="hint">
+      One row per interaction offered to a CSM, from the 8x8 Daily Interactions export.
+      Counts only, no durations: the Busy Duration in that export nests customer legs under agent legs
+      and is not comparable with handling time.
+    </div>
+    <div class="kpis" id="ikpis"></div>
+    <div class="chartbox" style="height:300px"><canvas id="chart4"></canvas></div>
+    <h3 style="margin-top:22px">By CSM</h3>
+    <div class="hint">Accept rate is accepted divided by all offers. Click any heading to sort.</div>
+    <div class="scroll"><table id="t-iagent"></table></div>
+    <h3 style="margin-top:22px">By coach</h3>
+    <div class="scroll"><table id="t-icoach"></table></div>
+  </div>
+
+  <div id="v-sla" class="hide">
+    <h3>Talk time SLA</h3>
+    <div class="hint" id="slaHint"></div>
+    <div class="kpis" id="slakpis"></div>
+    <div class="scroll"><table id="t-sla"></table></div>
+    <div class="hint" style="margin-top:10px">
+      Pace is talk time to date divided by the required daily rate times that CSM's own active days, so
+      100% means on target for the days they worked. Projected quarter assumes they keep that daily rate
+      across every weekday left in the quarter; it is an estimate, not a forecast of attendance.
+    </div>
+  </div>
+
   <div id="v-dq" class="hide">
     <h3>Data quality</h3>
     <div class="hint">Checks that run on every load. Anything red should be resolved before the numbers are quoted.</div>
@@ -199,9 +227,16 @@ code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px}
     anywhere. The repo must be public; a private repo would need a token in
     the page, which you should not do.                                       */
 const DATA_BASE = './data/';
+
+/* ============================ SLA ============================ */
+/*  Talk time SLA: hours per CSM per quarter. The required daily rate is the
+    target divided by the weekdays in that quarter. Each CSM is measured only
+    on days they actually worked, so absence does not count against them.      */
+const SLA_HOURS = 75;
 /* ============================ state ============================ */
-const S={handling:[],adj:[],roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
-         sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1]}};
+const S={handling:[],adj:[],inter:[],unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
+         sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1],
+                iagent:['offers',-1],iperiod:['key',1],sla:['pace',-1]}};
 const $=id=>document.getElementById(id);
 const EXCEL_EPOCH=Date.UTC(1899,11,30);
 
@@ -249,6 +284,16 @@ function periodLabel(k,g){
   if(g==='day'){const[y,m,d]=k.split('-');return `${MON[+m-1]} ${+d}`;}
   return k;
 }
+function quarterOf(iso){
+  const [y,m]=iso.split('-').map(Number), q=Math.floor((m-1)/3);
+  const s=new Date(Date.UTC(y,q*3,1)), e=new Date(Date.UTC(y,q*3+3,0));
+  return {label:`${y} Q${q+1}`,start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10)};
+}
+function weekdaysBetween(a,b){
+  let n=0,d=new Date(a+'T00:00:00Z'),z=new Date(b+'T00:00:00Z');
+  while(d<=z){ const w=d.getUTCDay(); if(w>0&&w<6)n++; d.setUTCDate(d.getUTCDate()+1); }
+  return n;
+}
 const confClass=c=>{c=String(c||'');
   if(/^UNPARS/i.test(c))return['bad','unusable'];
   if(/^(ASSUMED|FLAG)/i.test(c))return['warn','assumed'];
@@ -282,6 +327,61 @@ function parseHandling(wb,fname){
       sec:cellSeconds(r[cHand]),src:fname});
     n++;
   }
+  return n;
+}
+const ACTS=['Accepted','Rejected','Offer Timeout','Abandoned','Customer Hang Up'];
+function normAct(a){
+  const s=String(a||'').trim();
+  const hit=ACTS.find(x=>x.toLowerCase()===s.toLowerCase());
+  return hit||(s?'Other':'Unknown');
+}
+function parseInteractions(wb,fname){
+  const ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+  let hi=-1;
+  for(let i=0;i<Math.min(rows.length,40);i++){
+    const tx=(rows[i]||[]).map(x=>String(x==null?'':x).toLowerCase());
+    if(tx.some(x=>x.includes('participant'))&&tx.some(x=>x.includes('offer action'))){hi=i;break;}
+  }
+  if(hi<0){S.warn.push(fname+': no header row with Participant and Offer Action');return 0;}
+  const H=(rows[hi]||[]).map(x=>String(x==null?'':x).trim().toLowerCase());
+  const cT=H.findIndex(x=>x.includes('time')),cP=H.findIndex(x=>x.includes('participant')),
+        cA=H.findIndex(x=>x.includes('offer action')),cD=H.findIndex(x=>x.includes('busy'));
+  if(cT<0||cP<0||cA<0){S.warn.push(fname+': missing Time, Participant or Offer Action column');return 0;}
+  let cur=null,n=0;
+  const flush=()=>{
+    if(!cur)return;
+    const legs=cur.kids.length?cur.kids:[{p:cur.p,a:cur.a,d:cur.d}];
+    let credited=0;
+    legs.forEach(l=>{
+      const name=String(l.p||'').trim();
+      if(!S.roster.has(name))return;
+      credited++;
+      S.inter.push({date:cur.date,agent:name,action:normAct(l.a),sec:l.d||0,src:fname});
+    });
+    if(!credited){
+      legs.forEach(l=>{
+        const name=String(l.p||'').trim();
+        if(!name||/[0-9+]/.test(name))return;   // customer ids and phone numbers
+        S.unknownP.set(name,(S.unknownP.get(name)||0)+1);
+      });
+    }
+    cur=null;
+  };
+  for(let i=hi+1;i<rows.length;i++){
+    const r=rows[i]; if(!r)continue;
+    if(/^total$/i.test(String(r[0]==null?'':r[0]).trim())){flush();continue;}
+    const hasTime=typeof r[cT]==='number'||r[cT] instanceof Date;
+    if(hasTime){
+      flush();
+      cur={date:cellDate(r[cT]),p:String(r[cP]||''),a:String(r[cA]||''),
+           d:cellSeconds(r[cD]),kids:[]};
+      n++;
+    } else if(cur&&r[cP]&&String(r[cP]).trim()!==''){
+      cur.kids.push({p:String(r[cP]),a:String(r[cA]||''),d:cellSeconds(r[cD])});
+    }
+  }
+  flush();
   return n;
 }
 function csvRows(text){
@@ -321,7 +421,7 @@ function loadAdj(objs){
 
 /* ============================ loading ============================ */
 async function loadFromRepo(){
-  S.handling=[];S.adj=[];S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.adj=[];S.inter=[];S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const man=await fetch(DATA_BASE+'manifest.json',{cache:'no-store'}).then(r=>{
     if(!r.ok)throw new Error('manifest.json not found at '+DATA_BASE+' ('+r.status+')');return r.json();});
   const rosterFile=man.roster||'roster.csv', adjFile=man.adjustments||'adjustments.csv';
@@ -336,6 +436,12 @@ async function loadFromRepo(){
     if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
     const n=parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
     S.files.push(`${f} (${n} rows)`);
+  }
+  for(const f of (man.interactions||[])){
+    const r=await fetch(DATA_BASE+f,{cache:'no-store'});
+    if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
+    const n=parseInteractions(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
+    S.files.push(`${f} (${n} interactions)`);
   }
   S.exclude=man.exclude||[];
   applyExclusions();
@@ -352,9 +458,11 @@ function applyExclusions(){
   });
   S.handling=keep;
   S.adj=S.adj.filter(a=>!ex.has(a.agent));
+  S.inter=S.inter.filter(a=>!ex.has(a.agent));
+  ex.forEach(n=>S.unknownP.delete(n));
 }
 async function loadFromFiles(list){
-  S.handling=[];S.adj=[];S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.adj=[];S.inter=[];S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const arr=[...list], csvs=arr.filter(f=>/\.csv$/i.test(f.name));
   for(const f of csvs){
     const txt=await f.text(), objs=parseCSV(txt), h=Object.keys(objs[0]||{});
@@ -363,8 +471,14 @@ async function loadFromFiles(list){
     else S.warn.push(f.name+': not recognised as roster or adjustments, ignored');
   }
   for(const f of arr.filter(f=>/\.xlsx?$/i.test(f.name))){
-    const n=parseHandling(XLSX.read(new Uint8Array(await f.arrayBuffer()),{type:'array'}),f.name);
-    S.files.push(`${f.name} (${n} rows)`);
+    const wb=XLSX.read(new Uint8Array(await f.arrayBuffer()),{type:'array'});
+    const flat=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:null})
+      .slice(0,40).flat().map(x=>String(x==null?'':x).toLowerCase());
+    if(flat.some(x=>x.includes('offer action'))){
+      const n=parseInteractions(wb,f.name); S.files.push(`${f.name} (${n} interactions)`);
+    } else {
+      const n=parseHandling(wb,f.name); S.files.push(`${f.name} (${n} rows)`);
+    }
   }
   if(!S.roster.size)S.warn.push('No roster.csv supplied, so coach, team and status are unknown for every agent.');
   applyExclusions();
@@ -541,6 +655,110 @@ function render(){
     {k:'conf',t:'Confidence',l:1,f:r=>{const[c,l]=confClass(r.conf);return `<span class="pill ${c}">${l}</span> <span class="sub">${esc(r.conf)}</span>`;}}
   ],arows,'adj',{});
 
+  /* interactions */
+  const iRows=S.inter.filter(x=>{const md=meta(x.agent);
+    return (!f||x.date>=f)&&(!t||x.date<=t)&&(!C.length||C.includes(md.coach))&&
+           (!T.length||T.includes(md.team))&&(!St.length||St.includes(md.status))&&
+           (!A.length||A.includes(x.agent));});
+  const iroll=(keyFn)=>{
+    const m=new Map();
+    iRows.forEach(x=>{const k=keyFn(x);
+      if(!m.has(k))m.set(k,{key:k,offers:0,Accepted:0,Rejected:0,'Offer Timeout':0,
+                            Abandoned:0,'Customer Hang Up':0,Other:0,agents:new Set()});
+      const o=m.get(k); o.offers++; o.agents.add(x.agent);
+      if(o[x.action]===undefined)o.Other++; else o[x.action]++;});
+    return [...m.values()].map(o=>({...o,nAgents:o.agents.size,
+      rate:o.offers?o.Accepted/o.offers:0}));
+  };
+  const itot=iroll(()=> 'all')[0]||{offers:0,Accepted:0,Rejected:0,'Offer Timeout':0,Abandoned:0,'Customer Hang Up':0,Other:0,rate:0,nAgents:0};
+  $('ikpis').innerHTML=[
+    ['Offers',itot.offers.toLocaleString(),itot.nAgents+' CSMs'],
+    ['Accepted',itot.Accepted.toLocaleString(),pct(itot.Accepted,itot.offers)+' of offers'],
+    ['Rejected',itot.Rejected.toLocaleString(),pct(itot.Rejected,itot.offers)],
+    ['Offer timeout',itot['Offer Timeout'].toLocaleString(),pct(itot['Offer Timeout'],itot.offers)],
+    ['Abandoned',itot.Abandoned.toLocaleString(),pct(itot.Abandoned,itot.offers)],
+    ['Customer hang up',itot['Customer Hang Up'].toLocaleString(),pct(itot['Customer Hang Up'],itot.offers)]
+  ].map(([l,v,n])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
+  const ichron=iroll(x=>periodKey(x.date,g)).sort((a,b)=>a.key.localeCompare(b.key));
+  const SER=[['Accepted',cA],['Rejected','#c0504d'],['Offer Timeout',css.getPropertyValue('--amber').trim()],
+             ['Abandoned','#8064a2'],['Customer Hang Up','#9aa8bf']];
+  drawChart('chart4',{type:'bar',data:{labels:ichron.map(p=>periodLabel(p.key,g)),
+    datasets:SER.map(([k,col])=>({label:k,data:ichron.map(p=>p[k]||0),backgroundColor:col,borderRadius:3}))},
+    options:{maintainAspectRatio:false,responsive:true,
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,title:{display:true,text:'Offers'}}},
+      plugins:{legend:{position:'bottom'},title:{display:true,text:'Offer outcomes by period'}}}});
+  const icols=(label)=>[
+    {k:'key',t:label,l:1,f:r=>esc(r.key),ft:()=>'Total'},
+    {k:'nAgents',t:'CSMs',f:r=>r.nAgents,ft:f=>f.nAgents},
+    {k:'offers',t:'Offers',f:r=>r.offers,ft:f=>f.offers},
+    {k:'Accepted',t:'Accepted',f:r=>r.Accepted,ft:f=>f.Accepted},
+    {k:'rate',t:'Accept rate',f:r=>pct(r.Accepted,r.offers),ft:f=>pct(f.Accepted,f.offers)},
+    {k:'Rejected',t:'Rejected',f:r=>r.Rejected||'–',ft:f=>f.Rejected},
+    {k:'Offer Timeout',t:'Offer timeout',f:r=>r['Offer Timeout']||'–',ft:f=>f['Offer Timeout']},
+    {k:'Abandoned',t:'Abandoned',f:r=>r.Abandoned||'–',ft:f=>f.Abandoned},
+    {k:'Customer Hang Up',t:'Cust. hang up',f:r=>r['Customer Hang Up']||'–',ft:f=>f['Customer Hang Up']}];
+  const ia=sortBy(iroll(x=>x.agent),S.sort.iagent).map(r=>({...r,coach:meta(r.key).coach,team:meta(r.key).team}));
+  table($('t-iagent'),[icols('CSM')[0],
+    {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:f=>f.nAgents+' CSMs'},
+    {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
+    ...icols('CSM').slice(2)],ia,'iagent',itot);
+  table($('t-icoach'),icols('Coach'),sortBy(iroll(x=>meta(x.agent).coach),S.sort.iagent),'iagent',itot);
+
+  /* SLA — always quarter to date, ignores the date range above */
+  const anchor=$('to').value||(S.rows.map(x=>x.date).sort().pop()||'');
+  if(anchor){
+    const Q=quarterOf(anchor);
+    const qEnd=anchor<Q.end?anchor:Q.end;
+    const wd=weekdaysBetween(Q.start,Q.end);
+    const target=SLA_HOURS*3600, rate=target/wd;
+    $('slaHint').innerHTML=`Target <strong>${SLA_HOURS} hours per CSM</strong> for <strong>${esc(Q.label)}</strong> `+
+      `(${esc(Q.start)} to ${esc(Q.end)}, ${wd} weekdays, so ${hms(rate)} per working day). `+
+      `Figures are quarter to date through ${esc(qEnd)} and <strong>ignore the date range above</strong>; the coach, team, status and agent filters still apply.`;
+    const inQ=S.rows.filter(r=>r.date>=Q.start&&r.date<=qEnd&&
+      (!C.length||C.includes(r.coach))&&(!T.length||T.includes(r.team))&&
+      (!St.length||St.includes(r.status))&&(!A.length||A.includes(r.agent)));
+    const byA=new Map();
+    const roster=[...S.roster.values()].filter(m=>
+      (!C.length||C.includes(m.coach))&&(!T.length||T.includes(m.team))&&
+      (!St.length||St.includes(m.status))&&(!A.length||A.includes(m.agent)));
+    roster.forEach(m=>byA.set(m.agent,{agent:m.agent,coach:m.coach,team:m.team,status:m.status,qtd:0,days:0}));
+    inQ.forEach(r=>{ if(!byA.has(r.agent))return;
+      const o=byA.get(r.agent); o.qtd+=r.total; o.days+=r.active; });
+    const sla=[...byA.values()].map(o=>({...o,exp:rate*o.days,
+      pace:o.days?o.qtd/(rate*o.days):null, att:o.qtd/target,
+      proj:o.days?o.qtd/o.days*wd:0}));
+    const st=o=>o.days===0?'No active days':(o.pace>=1?'On or above pace':'Behind pace');
+    const sum=sla.reduce((a,o)=>({qtd:a.qtd+o.qtd,exp:a.exp+o.exp,days:a.days+o.days}),{qtd:0,exp:0,days:0});
+    const nOn=sla.filter(o=>st(o)==='On or above pace').length,
+          nBe=sla.filter(o=>st(o)==='Behind pace').length,
+          nNo=sla.filter(o=>st(o)==='No active days').length;
+    $('slakpis').innerHTML=[
+      ['Talk time QTD',hms(sum.qtd),hrs(sum.qtd)+' hours'],
+      ['Expected to date',hms(sum.exp),'for days actually worked'],
+      ['Pace',sum.exp?((sum.qtd/sum.exp)*100).toFixed(0)+'%':'–','100% is on target'],
+      ['On or above pace',nOn,'of '+sla.length+' CSMs'],
+      ['Behind pace',nBe,nBe?'need attention':'none'],
+      ['No active days',nNo,'no recorded handling time']
+    ].map(([l,v,n])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
+    table($('t-sla'),[
+      {k:'agent',t:'CSM',l:1,f:r=>esc(r.agent),ft:()=>'Total'},
+      {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:()=>sla.length+' CSMs'},
+      {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
+      {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
+      {k:'qtd',t:'Talk time QTD',f:r=>hms(r.qtd),ft:f=>hms(f.qtd)},
+      {k:'exp',t:'Expected to date',f:r=>hms(r.exp),ft:f=>hms(f.exp)},
+      {k:'pace',t:'Pace',f:r=>r.pace==null?'–':(r.pace*100).toFixed(0)+'%',
+        ft:f=>f.exp?((f.qtd/f.exp)*100).toFixed(0)+'%':'–'},
+      {k:'pace',t:'Status',l:1,f:r=>{const s=st(r);
+        return `<span class="pill ${s==='On or above pace'?'ok':s==='Behind pace'?'bad':'warn'}">${s}</span>`;}},
+      {k:'att',t:'% of '+SLA_HOURS+'h',f:r=>(r.att*100).toFixed(0)+'%',
+        ft:f=>((f.qtd/(target*sla.length))*100).toFixed(0)+'%'},
+      {k:'proj',t:'Projected quarter',f:r=>hms(r.proj)},
+      {k:'proj',t:'Projection',l:1,f:r=>r.days===0?'–':
+        `<span class="pill ${r.proj>=target?'ok':'bad'}">${r.proj>=target?'clears':'misses'}</span>`}
+    ],sortBy(sla,S.sort.sla),'sla',sum);
+  }
+
   /* data quality */
   const dq=[];
   const noRoster=[...new Set(S.handling.map(h=>h.agent))].filter(a=>!S.roster.has(a));
@@ -569,6 +787,15 @@ function render(){
     unusable?'Excluded from all totals. See the Adjustments tab for the raw text.':'All records converted']);
   dq.push(['Duplicate agent-day rows in the 8x8 files',dupe,dupe?'bad':'ok',
     dupe?'The same agent and date appears in more than one export, which double counts. Check for overlapping date ranges.':'No agent-day appears twice']);
+  if(S.inter.length||S.unknownP.size){
+    dq.push(['Interaction legs credited to a CSM',S.inter.length,'ok',
+      'From the Daily Interactions exports. One leg per CSM per interaction.']);
+    const up=[...S.unknownP.entries()].sort((a,b)=>b[1]-a[1]);
+    dq.push(['Interactions whose participant is not on the roster',up.reduce((s,[,n])=>s+n,0),
+      up.length?'bad':'ok',
+      up.length?'Not counted on the Offers tab: '+up.map(([n,c])=>`${n} (${c})`).join(', ')
+               :'Every interaction resolved to a roster CSM']);
+  }
   S.warn.forEach(w=>dq.push(['Load warning','','warn',w]));
   $('t-dq').innerHTML='<thead><tr><th class="l">Check</th><th>Count</th><th class="l">Result</th><th class="l">Detail</th></tr></thead><tbody>'+
     dq.map(([c,n,s,d])=>`<tr><td class="l">${esc(c)}</td><td>${n===''?'':n}</td>
@@ -607,7 +834,7 @@ function initFilters(){
     b.classList.add('on');render();});
 }
 const TABS=[['trend','Trend & breakdown'],['agent','By CSM'],['coach','By coach'],
-            ['adj','Adjustments'],['dq','Data quality']];
+            ['inter','Offers'],['sla','SLA'],['adj','Adjustments'],['dq','Data quality']];
 $('tabs').innerHTML=TABS.map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
 function setTab(k){
   S.view=k;
@@ -658,7 +885,7 @@ $('themeBtn').onclick=()=>{
 };
 try{const t=localStorage.getItem('tt-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(_){}
 $('expBtn').onclick=()=>{
-  const tbl=({trend:'t-period',agent:'t-agent',coach:'t-coach',adj:'t-adj',dq:'t-dq'})[S.view];
+  const tbl=({trend:'t-period',agent:'t-agent',coach:'t-coach',inter:'t-iagent',sla:'t-sla',adj:'t-adj',dq:'t-dq'})[S.view];
   const rows=[...$(tbl).querySelectorAll('tr')].map(tr=>
     [...tr.children].map(td=>{
       const t=td.textContent.replace(/[▲▼]/g,'').trim();
