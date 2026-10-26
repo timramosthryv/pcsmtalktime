@@ -460,6 +460,11 @@ function applyExclusions(){
   S.adj=S.adj.filter(a=>!ex.has(a.agent));
   S.inter=S.inter.filter(a=>!ex.has(a.agent));
   ex.forEach(n=>S.unknownP.delete(n));
+  // Drop them from the roster too, so tabs that list CSMs rather than rows
+  // (the SLA tab) do not seed an empty row for someone who is excluded.
+  // Safe here: parsing has already run, so their interaction legs were
+  // recognised as agent legs and then filtered out above, not flagged unknown.
+  ex.forEach(n=>S.roster.delete(n));
 }
 async function loadFromFiles(list){
   S.handling=[];S.adj=[];S.inter=[];S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
@@ -852,7 +857,7 @@ async function boot(fromFiles){
     initFilters();setTab(S.view);
     const bad=S.warn.length;
     msg(bad?'err':'info',
-      `Loaded ${S.handling.length.toLocaleString()} handling rows, ${S.adj.length} adjustment records, ${S.roster.size} CSMs on the roster.`+
+      `Loaded ${S.handling.length.toLocaleString()} handling rows, ${S.adj.length} adjustment records, ${S.roster.size} CSMs after exclusions.`+
       ` <span class="sub">${esc(DATA_BASE)} · ${esc(S.files.join(' · '))}</span>`+
       (bad?`<br><strong>${bad} warning${bad===1?'':'s'}</strong> — see the Data quality tab.`:''));
     $('dropPanel').classList.add('hide');
