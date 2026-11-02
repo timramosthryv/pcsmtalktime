@@ -6,90 +6,144 @@
 <title>PCSM Talk Time</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 :root{
-  --bg:#f4f6f9; --panel:#fff; --ink:#15213b; --muted:#5d6b85; --line:#dde3ec;
-  --navy:#1f3864; --accent:#0d7d7d; --amber:#b57d00; --red:#b3261e; --green:#1e7a46;
-  --h:#2f5597; --a:#13a0a0; --shadow:0 1px 2px rgba(21,33,59,.06),0 2px 8px rgba(21,33,59,.05);
+  --orange:#ff5000; --orange-soft:#fff1ea;
+  --green:#1f9d55;  --green-soft:#e7f6ee;
+  --red:#d64545;    --red-soft:#fbeaea;
+  --amber:#f0a020;  --amber-soft:#fdf3e2;  --amber-ink:#b9770a;
+  --blue:#3d7bd6;   --blue-soft:#eaf1fb;
+  --ink:#1d2733; --muted:#6b7683; --line:#e7ebf0; --bg:#f4f5f7; --card:#ffffff;
+  --shadow:0 1px 2px rgba(20,30,45,.04);
+  --chart1:#3d7bd6; --chart2:#1f9d55;
+  color-scheme:light;
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#11161f; --panel:#1a212d; --ink:#e7ecf4; --muted:#9aa8bf; --line:#2b3545;
-    --navy:#8fb0e6; --accent:#3fc0c0; --amber:#e0a93c; --red:#f2857c; --green:#5fcb8e;
-    --h:#5b8dd6; --a:#2fb6b6; --shadow:0 1px 2px rgba(0,0,0,.4);
+    --orange:#ff6a28; --orange-soft:#2e1a10;
+    --green:#4ec07d;  --green-soft:#12291d;
+    --red:#f0867c;    --red-soft:#2e1817;
+    --amber:#e0a63c;  --amber-soft:#2b2211; --amber-ink:#e0a63c;
+    --blue:#6ca3ea;   --blue-soft:#15202e;
+    --ink:#e7ecf3; --muted:#95a1b0; --line:#28313c; --bg:#11151a; --card:#192027;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    --chart1:#6ca3ea; --chart2:#4ec07d;
+    color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#11161f; --panel:#1a212d; --ink:#e7ecf4; --muted:#9aa8bf; --line:#2b3545;
-  --navy:#8fb0e6; --accent:#3fc0c0; --amber:#e0a93c; --red:#f2857c; --green:#5fcb8e;
-  --h:#5b8dd6; --a:#2fb6b6; --shadow:0 1px 2px rgba(0,0,0,.4);
+  --orange:#ff6a28; --orange-soft:#2e1a10;
+  --green:#4ec07d;  --green-soft:#12291d;
+  --red:#f0867c;    --red-soft:#2e1817;
+  --amber:#e0a63c;  --amber-soft:#2b2211; --amber-ink:#e0a63c;
+  --blue:#6ca3ea;   --blue-soft:#15202e;
+  --ink:#e7ecf3; --muted:#95a1b0; --line:#28313c; --bg:#11151a; --card:#192027;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  --chart1:#6ca3ea; --chart2:#4ec07d;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;}
-.wrap{max-width:1500px;margin:0 auto;padding:20px 16px 64px}
-header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
-h1{margin:0;font-size:22px;letter-spacing:-.2px}
-.sub{color:var(--muted);font-size:13px;margin-top:2px}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-button,select,input[type=date]{font:inherit;color:var(--ink);background:var(--panel);
-  border:1px solid var(--line);border-radius:7px;padding:7px 11px;cursor:pointer}
-button:hover{border-color:var(--navy)}
-button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
-:root[data-theme="dark"] button.primary{color:#11161f}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.primary{color:#11161f}}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
-.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-.f label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;font-weight:600}
-.f select,.f input{width:100%}
-select[multiple]{height:104px;cursor:default}
-.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.presets button{padding:5px 10px;font-size:12px;border-radius:999px}
-.presets button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px}
-.kpi{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:13px 15px;box-shadow:var(--shadow)}
-.kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:600}
-.kpi .val{font-size:21px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
-.kpi .note{font-size:11px;color:var(--muted);margin-top:2px}
-.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-bottom:0}
-.tabs button{border:none;background:none;border-radius:7px 7px 0 0;padding:9px 14px;color:var(--muted);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-2px}
-.tabs button.on{color:var(--ink);border-bottom-color:var(--accent)}
-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-th,td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  font-size:14px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:26px 22px 60px}
+
+/* header */
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;
+  margin-bottom:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:flex-start;gap:16px}
+.logo-img{height:34px;width:auto;display:block;margin-top:3px}
+h1{font-size:22px;margin:0 0 3px;font-weight:700;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:13.5px;margin:0}
+.btns{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+button,select,input[type=date]{font-family:inherit;border:1px solid var(--line);background:var(--card);
+  border-radius:9px;padding:8px 14px;font-size:13px;font-weight:600;color:var(--ink);
+  cursor:pointer;transition:.15s}
+button:hover,select:hover,input[type=date]:hover{border-color:var(--orange)}
+button.primary{background:var(--orange);color:#fff;border-color:var(--orange)}
+button.primary:hover{filter:brightness(1.06)}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tabs button{border:0;background:transparent;padding:11px 16px;font-size:13.5px;font-weight:700;
+  color:var(--muted);border-bottom:3px solid transparent;white-space:nowrap;border-radius:0;margin-bottom:-1px}
+.tabs button:hover{color:var(--ink);border-color:transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--orange)}
+
+/* cards */
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:20px 22px;margin-bottom:16px;box-shadow:var(--shadow)}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:16px 20px}
+.f label{display:block;font-size:10.5px;letter-spacing:.6px;color:var(--muted);
+  font-weight:700;text-transform:uppercase;margin-bottom:6px}
+.f select,.f input{width:100%;font-weight:400;font-size:13.5px;padding:8px 11px;border-radius:8px}
+select[multiple]{height:112px;cursor:default;padding:4px}
+select[multiple] option{padding:4px 7px;border-radius:5px}
+select[multiple] option:checked{background:var(--orange-soft);color:var(--ink);font-weight:600}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.presets button{padding:6px 13px;font-size:12.5px;border-radius:20px;font-weight:600}
+.presets button.on{background:var(--orange-soft);color:var(--orange);border-color:var(--orange)}
+
+/* stat cards */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:13px;
+  padding:15px 16px;box-shadow:var(--shadow)}
+.kpi .lab{font-size:11px;letter-spacing:.4px;color:var(--muted);font-weight:700;text-transform:uppercase}
+.kpi .val{font-size:24px;font-weight:800;margin:8px 0 2px;letter-spacing:-.5px;
+  font-variant-numeric:tabular-nums}
+.kpi .note{font-size:11.5px;color:var(--muted)}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:9px 10px;border-bottom:1px solid var(--line);
+  vertical-align:middle;white-space:nowrap}
 th:first-child,td:first-child,th.l,td.l{text-align:left}
-thead th{position:sticky;top:0;background:var(--panel);font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);cursor:pointer;z-index:1}
+thead th{position:sticky;top:0;background:var(--card);font-size:10.5px;letter-spacing:.5px;
+  color:var(--muted);text-transform:uppercase;font-weight:700;cursor:pointer;user-select:none;z-index:1}
 thead th:hover{color:var(--ink)}
-tbody tr:hover{background:rgba(13,125,125,.06)}
-tfoot td{font-weight:700;border-top:2px solid var(--navy);border-bottom:none}
-.scroll{max-height:560px;overflow:auto;border:1px solid var(--line);border-radius:9px}
-.chartbox{position:relative;height:330px}
-.pill{display:inline-block;padding:1px 7px;border-radius:999px;font-size:11px;font-weight:600}
-.pill.ok{background:rgba(30,122,70,.13);color:var(--green)}
-.pill.warn{background:rgba(181,125,0,.15);color:var(--amber)}
-.pill.bad{background:rgba(179,38,30,.13);color:var(--red)}
+tbody tr:hover{background:var(--orange-soft)}
+tfoot td{font-weight:800;border-top:2px solid var(--line);border-bottom:none;background:var(--card)}
+.scroll{overflow:auto;max-height:640px;border:1px solid var(--line);border-radius:12px}
+
+/* badges */
+.pill{display:inline-block;min-width:46px;text-align:center;padding:3px 9px;border-radius:7px;
+  font-weight:700;font-size:12px;white-space:nowrap}
+.pill.ok{background:var(--green-soft);color:var(--green)}
+.pill.warn{background:var(--amber-soft);color:var(--amber-ink)}
+.pill.bad{background:var(--red-soft);color:var(--red)}
 .pill.gray{background:var(--line);color:var(--muted)}
-.drop{border:2px dashed var(--line);border-radius:11px;padding:28px;text-align:center;color:var(--muted)}
-.drop.hot{border-color:var(--accent);background:rgba(13,125,125,.06)}
-.msg{padding:10px 13px;border-radius:9px;font-size:13px;margin-bottom:12px}
-.msg.err{background:rgba(179,38,30,.1);color:var(--red);border:1px solid rgba(179,38,30,.3)}
-.msg.info{background:rgba(47,85,151,.08);color:var(--h);border:1px solid var(--line)}
-.hide{display:none!important}
-.hint{font-size:12px;color:var(--muted);margin:2px 0 12px}
+
+/* misc */
+.chartbox{position:relative;height:330px}
+.msg{padding:11px 15px;border-radius:11px;font-size:13px;margin-bottom:16px;
+  border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
+.msg.err{background:var(--red-soft);color:var(--red);border-color:var(--red)}
+.msg.info{background:var(--card);color:var(--muted)}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
+.drop.hot{border-color:var(--orange);background:var(--orange-soft)}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5;max-width:92ch}
+h3{font-size:16px;margin:0 0 2px;font-weight:700}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:900px){.grid2{grid-template-columns:1fr}}
-h3{margin:0 0 2px;font-size:15px}
-.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
+.hide{display:none!important}
+code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
+  background:var(--bg);padding:2px 6px;border-radius:5px}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);
+  border-top-color:var(--orange);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
 @keyframes s{to{transform:rotate(360deg)}}
-code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px}
 </style>
 </head>
 <body>
 <div class="wrap">
 
 <header>
-  <div>
+  <div class="brand">
+    <img class="logo-img" src="thryv-logo.png" alt="" onerror="this.style.display='none'">
+    <div>
     <h1>PCSM Talk Time</h1>
     <div class="sub">8x8 handling time plus approved Asana talk time adjustments &middot; <span id="covers">loading…</span></div>
+    </div>
   </div>
   <div class="btns">
     <button id="themeBtn" title="Toggle light and dark">&#9680;</button>
@@ -125,8 +179,13 @@ code{background:var(--bg);padding:1px 5px;border-radius:4px;font-size:12px}
     <div class="f"><label>Agent</label><select id="fAgent" multiple></select></div>
   </div>
   <div class="presets" id="presets"></div>
+  <div class="presets" style="margin-top:8px">
+    <button id="clearBtn">Clear all filters</button>
+    <span class="sub" style="align-self:center;font-size:12px">resets the lists and the date range</span>
+  </div>
   <div class="hint" style="margin:10px 0 0">
-    Nothing selected in a list means all. Ctrl or Cmd click to pick several. Weekends with no recorded activity are excluded automatically.
+    Nothing selected in a list means all. <strong>Click to add, click again to remove</strong>, or press Escape in a list to clear it.
+    Weekends with no recorded activity are excluded automatically.
   </div>
 </div>
 
@@ -575,7 +634,7 @@ function drawChart(id,cfg){
 function render(){
   const rows=filtered(), g=$('gran').value;
   const css=getComputedStyle(document.body);
-  const cH=css.getPropertyValue('--h').trim(), cA=css.getPropertyValue('--a').trim();
+  const cH=css.getPropertyValue('--chart1').trim(), cA=css.getPropertyValue('--chart2').trim();
 
   /* KPIs */
   const tot=rollup(rows,()=> 'all')[0]||{hand:0,adj:0,days:0,recs:0,adjusted:0,avg:0,nAgents:0};
@@ -837,6 +896,24 @@ function render(){
 }
 
 /* ============================ filters / ui ============================ */
+/* Plain click toggles an option instead of replacing the whole selection.
+   Delegated, so it keeps working after the lists are rebuilt on each load. */
+function makeToggleable(id){
+  const el=$(id);
+  el.addEventListener('mousedown',e=>{
+    if(e.target.tagName!=='OPTION')return;
+    e.preventDefault();
+    e.target.selected=!e.target.selected;
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+  el.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    [...el.options].forEach(o=>o.selected=false);
+    el.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+}
+['fCoach','fTeam','fStatus','fAgent'].forEach(makeToggleable);
+
 function fillSelect(id,vals,keep){
   const el=$(id),prev=new Set(keep||selected(id));
   el.innerHTML=vals.map(v=>`<option value="${esc(v)}"${prev.has(v)?' selected':''}>${esc(v)}</option>`).join('');
@@ -901,6 +978,15 @@ async function boot(fromFiles){
     if(['from','to'].includes(id))$('presets').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
     render();});
 });
+$('clearBtn').onclick=()=>{
+  ['fCoach','fTeam','fStatus','fAgent'].forEach(id=>{
+    [...$(id).options].forEach(o=>o.selected=false);
+  });
+  const ds=S.rows.map(r=>r.date).sort();
+  if(ds.length){ $('from').value=ds[0]; $('to').value=ds[ds.length-1]; }
+  $('presets').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+  render();
+};
 $('reloadBtn').onclick=()=>boot();
 $('upBtn').onclick=()=>{$('dropPanel').classList.toggle('hide');};
 $('drop').onclick=()=>$('file').click();
