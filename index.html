@@ -234,7 +234,7 @@ const DATA_BASE = './data/';
     on days they actually worked, so absence does not count against them.      */
 const SLA_HOURS = 75;
 /* ============================ state ============================ */
-const S={handling:[],adj:[],inter:[],unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
+const S={handling:[],adj:[],inter:[],tz:new Map(),unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
          sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1],
                 iagent:['offers',-1],iperiod:['key',1],sla:['pace',-1]}};
 const $=id=>document.getElementById(id);
@@ -300,9 +300,23 @@ const confClass=c=>{c=String(c||'');
   return['ok','literal'];};
 
 /* ============================ parsing ============================ */
+function readTimeZone(rows,fname){
+  for(let i=0;i<Math.min(rows.length,12);i++){
+    for(const cell of (rows[i]||[])){
+      const s=String(cell==null?'':cell);
+      if(/time\s*zone/i.test(s)){
+        const m=s.match(/Time Zone:\s*(.+)$/i);
+        S.tz.set(fname,(m?m[1]:s).trim());
+        return;
+      }
+    }
+  }
+  S.tz.set(fname,'not stated');
+}
 function parseHandling(wb,fname){
   const ws=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+  readTimeZone(rows,fname);
   let hi=-1;
   for(let i=0;i<Math.min(rows.length,40);i++){
     const t=(rows[i]||[]).map(x=>String(x==null?'':x).toLowerCase());
@@ -338,6 +352,7 @@ function normAct(a){
 function parseInteractions(wb,fname){
   const ws=wb.Sheets[wb.SheetNames[0]];
   const rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null});
+  readTimeZone(rows,fname);
   let hi=-1;
   for(let i=0;i<Math.min(rows.length,40);i++){
     const tx=(rows[i]||[]).map(x=>String(x==null?'':x).toLowerCase());
@@ -421,7 +436,7 @@ function loadAdj(objs){
 
 /* ============================ loading ============================ */
 async function loadFromRepo(){
-  S.handling=[];S.adj=[];S.inter=[];S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const man=await fetch(DATA_BASE+'manifest.json',{cache:'no-store'}).then(r=>{
     if(!r.ok)throw new Error('manifest.json not found at '+DATA_BASE+' ('+r.status+')');return r.json();});
   const rosterFile=man.roster||'roster.csv', adjFile=man.adjustments||'adjustments.csv';
@@ -467,7 +482,7 @@ function applyExclusions(){
   ex.forEach(n=>S.roster.delete(n));
 }
 async function loadFromFiles(list){
-  S.handling=[];S.adj=[];S.inter=[];S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const arr=[...list], csvs=arr.filter(f=>/\.csv$/i.test(f.name));
   for(const f of csvs){
     const txt=await f.text(), objs=parseCSV(txt), h=Object.keys(objs[0]||{});
@@ -800,6 +815,19 @@ function render(){
       up.length?'bad':'ok',
       up.length?'Not counted on the Offers tab: '+up.map(([n,c])=>`${n} (${c})`).join(', ')
                :'Every interaction resolved to a roster CSM']);
+  }
+  if(S.tz.size){
+    const bad=[],list=[];
+    S.tz.forEach((zone,f)=>{
+      const wantAU=/aus/i.test(f), isAU=/australia|sydney/i.test(zone);
+      list.push(`${f}: ${zone}`);
+      if(wantAU!==isAU)bad.push(`${f} is ${zone}`);
+    });
+    dq.push(['Export time zones match the team',bad.length?bad.length+' wrong':'all correct',
+      bad.length?'bad':'ok',
+      bad.length
+        ? 'A file named for one region is stamped another. Dates in it are attributed to the wrong day: '+bad.join('; ')
+        : list.join(' · ')]);
   }
   S.warn.forEach(w=>dq.push(['Load warning','','warn',w]));
   $('t-dq').innerHTML='<thead><tr><th class="l">Check</th><th>Count</th><th class="l">Result</th><th class="l">Detail</th></tr></thead><tbody>'+
