@@ -7,30 +7,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
-<!--
-  v2 CHANGE LOG (search the file for "v2:" to find each change)
-  1. Period table now opens in date order (sort key was 'period', column key is 'key').
-  2. Only one sort arrow shows when two columns share a sort key.
-  3. Default date range and presets include Daily Interactions dates, so recent offers are not hidden.
-  4. Header wording matches the footer: adjustments are "submitted", not "approved".
-  5. CSM counts are labeled by what they count (roster vs. CSMs with activity).
-  6. An active day now includes days with Asana time but no 8x8 time (toggle: COUNT_ADJ_ONLY_DAYS).
-  7. SLA: holiday calendar per team (HOLIDAYS) and a second "pace vs calendar" measure for attendance.
-  8. Data quality: duplicate adjustment check and an adjustment-only days check.
-  9. Partial periods are labeled in charts and tables.
- 10. KPI cards lead with decimal hours; H:MM:SS moves to the note.
- 11. Export converts H:MM:SS to decimal hours, and the Offers export includes the coach table.
- 12. Load banner collapses the file list.
- 13. Opening the file locally (file://) reads data from the GitHub raw URL.
-
-  v3 ADDITIONS (search for "v3:")
-  A. Executive summary strip: three plain-language callouts at the top (SLA, month over month,
-     coach comparison), each opens its tab.
-  B. KPI cards: change vs. the prior period of equal length, plus a weekly sparkline.
-  C. By CSM: ranked bar chart with a selection-average line, and top five / bottom five lists.
-  D. SLA: clickable status tiles (Behind, On pace, Attendance gap, No active days) that filter the table.
-  E. CSM drilldown: click any CSM name or ranking bar for a side panel with daily detail and Asana entries.
--->
 <style>
 :root{
   --orange:#ff5000; --orange-soft:#fff1ea;
@@ -161,9 +137,6 @@ tfoot td{font-weight:800;border-top:2px solid var(--line);border-bottom:none;bac
   border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow)}
 .msg.err{background:var(--red-soft);color:var(--red);border-color:var(--red)}
 .msg.info{background:var(--card);color:var(--muted)}
-.msg details{display:inline}
-.msg summary{cursor:pointer;display:inline;color:var(--muted);text-decoration:underline dotted}
-.msg details[open] .files{display:block;margin-top:6px}
 .drop{border:2px dashed var(--line);border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
 .drop.hot{border-color:var(--orange);background:var(--orange-soft)}
 .hint{font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5;max-width:92ch}
@@ -176,45 +149,6 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
 .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);
   border-top-color:var(--orange);border-radius:50%;animation:s .7s linear infinite;vertical-align:-2px}
 @keyframes s{to{transform:rotate(360deg)}}
-
-/* v3: executive summary strip */
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
-@media(max-width:900px){.summary{grid-template-columns:1fr}}
-.callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:12px;
-  padding:13px 15px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s}
-.callout:hover,.callout:focus{box-shadow:0 0 0 2px var(--orange-soft),var(--shadow);outline:none}
-.callout.bad{border-left-color:var(--red)} .callout.warn{border-left-color:var(--amber)}
-.callout.ok{border-left-color:var(--green)} .callout.info{border-left-color:var(--blue)}
-.callout .ct{font-size:10.5px;letter-spacing:.5px;color:var(--muted);font-weight:700;text-transform:uppercase}
-.callout .cb{font-size:14.5px;font-weight:700;margin-top:5px;line-height:1.35}
-.callout .cn{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.45}
-
-/* v3: KPI deltas and sparklines */
-.delta{font-size:11.5px;font-weight:700;margin:2px 0 3px}
-.delta.up{color:var(--green)} .delta.down{color:var(--red)} .delta.flat{color:var(--muted);font-weight:600}
-.spark{display:block;width:100%;height:28px;margin-top:8px}
-
-/* v3: SLA status tiles */
-.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:6px}
-.kpi.bucket{border-top:4px solid var(--muted);cursor:pointer;transition:box-shadow .15s}
-.kpi.bucket.bad{border-top-color:var(--red)} .kpi.bucket.ok{border-top-color:var(--green)}
-.kpi.bucket.warn{border-top-color:var(--amber)} .kpi.bucket.gray{border-top-color:var(--muted)}
-.kpi.bucket:hover{box-shadow:0 0 0 2px var(--orange-soft)}
-.kpi.bucket.on{box-shadow:0 0 0 2px var(--orange)}
-.linkish{color:var(--orange);cursor:pointer;font-weight:600}
-
-/* v3: CSM links and drilldown drawer */
-.csm{cursor:pointer;border-bottom:1px dotted var(--muted)}
-.csm:hover{color:var(--orange);border-bottom-color:var(--orange)}
-.backdrop{position:fixed;inset:0;background:rgba(10,15,25,.38);z-index:40}
-.drawer{position:fixed;top:0;right:0;height:100vh;width:min(640px,100%);background:var(--bg);z-index:50;
-  box-shadow:-8px 0 30px rgba(0,0,0,.18);transform:translateX(105%);transition:transform .22s ease;
-  overflow-y:auto;padding:22px}
-.drawer.open{transform:none}
-.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-.dkpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-.kpi.sm .val{font-size:19px}
-.drawer .panel{padding:16px 18px}
 </style>
 </head>
 <body>
@@ -222,13 +156,10 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
 
 <header>
   <div class="brand">
-    <!-- v2: falls back to the GitHub copy of the logo when opened as a local file -->
-    <img class="logo-img" src="thryv-logo.png" alt=""
-      onerror="if(!this.dataset.r){this.dataset.r=1;this.src='https://raw.githubusercontent.com/timramosthryv/pcsmtalktime/main/thryv-logo.png'}else{this.style.display='none'}">
+    <img class="logo-img" src="thryv-logo.png" alt="" onerror="this.style.display='none'">
     <div>
     <h1>PCSM Talk Time</h1>
-    <!-- v2: "approved" changed to "submitted" to match the footer -->
-    <div class="sub">8x8 handling time plus Asana talk time adjustments as submitted &middot; <span id="covers">loading…</span></div>
+    <div class="sub">8x8 handling time plus approved Asana talk time adjustments &middot; <span id="covers">loading…</span></div>
     </div>
   </div>
   <div class="btns">
@@ -240,9 +171,6 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
 </header>
 
 <div id="status" class="msg info"><span class="spin"></span> Loading data…</div>
-
-<!-- v3: executive summary strip -->
-<div class="summary" id="summary"></div>
 
 <div id="dropPanel" class="panel hide">
   <div class="drop" id="drop">
@@ -279,18 +207,13 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
 </div>
 
 <div class="kpis" id="kpis"></div>
-<div class="hint" style="margin:-8px 0 16px">
-  Change compares the selected range with the same number of days just before it, and appears when that earlier
-  window has data (try a month preset or Last 30 days). Sparklines show weekly values
-  across the selected range; the first and last weeks may be partial.
-</div>
 
 <div class="tabs" id="tabs"></div>
 <div class="panel" style="border-top-left-radius:0;border-top-right-radius:0">
 
   <div id="v-trend">
     <h3>Adjusted talk time by period</h3>
-    <div class="hint">Stacked: 8x8 handling time plus Asana adjustments. Hover for detail. Periods still in progress are labeled partial.</div>
+    <div class="hint">Stacked: 8x8 handling time plus Asana adjustments. Hover for detail.</div>
     <div class="chartbox"><canvas id="chart1"></canvas></div>
     <h3 style="margin-top:22px">Period breakdown</h3>
     <div class="hint">Click any column heading to sort.</div>
@@ -298,16 +221,8 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
   </div>
 
   <div id="v-agent" class="hide">
-    <!-- v3: ranking chart and top / bottom five -->
-    <h3>Ranking: average per active day</h3>
-    <div class="hint">Every CSM with at least one active day in the selection. The dashed line is the selection average. Click a bar or any name for detail.</div>
-    <div class="chartbox" id="rankBox"><canvas id="chart5"></canvas></div>
-    <div class="grid2" style="margin:22px 0 22px">
-      <div><h3>Top five</h3><div class="hint" id="rankNote1"></div><div class="scroll"><table id="t-top"></table></div></div>
-      <div><h3>Bottom five</h3><div class="hint" id="rankNote2"></div><div class="scroll"><table id="t-bot"></table></div></div>
-    </div>
     <h3>By CSM</h3>
-    <div class="hint" id="agentHint"></div>
+    <div class="hint">Average per active day is adjusted talk time divided by days with any recorded handling time.</div>
     <div class="scroll"><table id="t-agent"></table></div>
   </div>
 
@@ -351,16 +266,11 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
     <h3>Talk time SLA</h3>
     <div class="hint" id="slaHint"></div>
     <div class="kpis" id="slakpis"></div>
-    <!-- v3: clickable status tiles -->
-    <div class="buckets" id="slabuckets"></div>
-    <div class="hint" id="slaFilter" style="margin:6px 0 12px"></div>
     <div class="scroll"><table id="t-sla"></table></div>
     <div class="hint" style="margin-top:10px">
-      <strong>Pace (days worked)</strong> is talk time to date divided by the required daily rate times that CSM's own active days,
-      so 100% means on target for the days they worked. <strong>Pace (calendar)</strong> divides by every working day elapsed
-      in the quarter for that CSM's team, so it also reflects time away. A large gap between the two points to attendance
-      rather than productivity. Projected quarter assumes the CSM keeps their daily rate across every working day in the
-      quarter; it is an estimate, not a forecast of attendance.
+      Pace is talk time to date divided by the required daily rate times that CSM's own active days, so
+      100% means on target for the days they worked. Projected quarter assumes they keep that daily rate
+      across every weekday left in the quarter; it is an estimate, not a forecast of attendance.
     </div>
   </div>
 
@@ -378,63 +288,31 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
 </div>
 </div>
 
-<!-- v3: CSM drilldown drawer -->
-<div id="backdrop" class="backdrop hide"></div>
-<aside id="drawer" class="drawer" aria-hidden="true">
-  <div class="dhead">
-    <div><h3 id="dTitle" style="font-size:19px"></h3><div class="sub" id="dSub"></div></div>
-    <button id="dClose" title="Close (Esc)">&#10005;</button>
-  </div>
-  <div class="kpis dkpis" id="dKpis"></div>
-  <div class="panel">
-    <h3>Daily talk time</h3>
-    <div class="hint">8x8 handling plus Asana adjustments in the selected range. The dashed line is the SLA daily rate.</div>
-    <div class="chartbox" style="height:220px"><canvas id="chart6"></canvas></div>
-  </div>
-  <div class="panel"><h3 style="margin-bottom:10px">Asana adjustments</h3><div class="scroll" style="max-height:300px"><table id="dAdj"></table></div></div>
-  <div class="panel"><h3 style="margin-bottom:10px">Daily detail</h3><div class="scroll" style="max-height:380px"><table id="dDays"></table></div></div>
-</aside>
-
 <script>
 /* ============================ data source ============================ */
 /*  DEFAULT: index.html sits in the same repo as the data folder and is served
     by GitHub Pages. Relative paths work, nothing to configure.
 
-    v2: when this file is opened directly from disk (file://), the browser
-    blocks relative fetches, so it reads the data from the GitHub raw URL
-    instead. This only works while the repo is public. If you make the repo
-    private, open the page through GitHub Pages or a local web server instead. */
-const RAW_BASE = 'https://raw.githubusercontent.com/timramosthryv/pcsmtalktime/main/data/';
-const DATA_BASE = location.protocol==='file:' ? RAW_BASE : './data/';
+    HOSTING index.html SOMEWHERE ELSE (local file, SharePoint, another site)?
+    Point DATA_BASE at the raw GitHub URL for your data folder:
+
+      const DATA_BASE =
+        'https://raw.githubusercontent.com/<user>/<repo>/main/data/';
+
+    raw.githubusercontent.com allows cross-origin reads, so this works from
+    anywhere. The repo must be public; a private repo would need a token in
+    the page, which you should not do.                                       */
+const DATA_BASE = './data/';
 
 /* ============================ SLA ============================ */
 /*  Talk time SLA: hours per CSM per quarter. The required daily rate is the
-    target divided by the working days in that quarter for the CSM's team.     */
+    target divided by the weekdays in that quarter. Each CSM is measured only
+    on days they actually worked, so absence does not count against them.      */
 const SLA_HOURS = 75;
-
-/*  v2: company holidays, by roster "team" value. Weekdays listed here are not
-    counted as working days for the SLA. THESE ARE PLACEHOLDERS: confirm the
-    observed dates with HR before relying on them. Australian public holidays
-    also vary by state.                                                         */
-const HOLIDAYS = {
-  'United States': ['2026-07-03','2026-09-07','2026-11-26','2026-11-27','2026-12-25'],
-  'Australia':     ['2026-12-25','2026-12-28']
-};
-
-/*  v2: an "active day" previously required 8x8 handling time. Days with only an
-    Asana adjustment added talk time without adding a day, which nudged the
-    per-day average and SLA pace upward. Set to false to restore the old rule. */
-const COUNT_ADJ_ONLY_DAYS = true;
-
-/*  v3: minimum active days for the top five / bottom five lists, so a CSM
-    with two strong days does not top the list.                               */
-const MIN_RANK_DAYS = 5;
-
 /* ============================ state ============================ */
 const S={handling:[],adj:[],inter:[],tz:new Map(),unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
          filters:{fCoach:new Set(),fTeam:new Set(),fStatus:new Set(),fAgent:new Set()},msVals:{},
-       /* v2: period default sort key fixed from 'period' to 'key' so the table opens in date order */
-       sort:{period:['key',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1],
+       sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1],
                 iagent:['offers',-1],iperiod:['key',1],sla:['pace',-1]}};
 const $=id=>document.getElementById(id);
 const EXCEL_EPOCH=Date.UTC(1899,11,30);
@@ -466,8 +344,6 @@ function cellSeconds(v){
 const hms=s=>{s=Math.round(s||0);const n=s<0?'-':'';s=Math.abs(s);
   return n+Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
 const hrs=s=>(s/3600).toFixed(1);
-/* v2: readable hours for KPI cards, e.g. "5,135.0 hrs" */
-const hrsL=s=>(s/3600).toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1})+' hrs';
 const pct=(a,b)=>b?((a/b)*100).toFixed(1)+'%':'–';
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function periodKey(iso,g){
@@ -485,113 +361,20 @@ function periodLabel(k,g){
   if(g==='day'){const[y,m,d]=k.split('-');return `${MON[+m-1]} ${+d}`;}
   return k;
 }
-/* v2: last weekday of the period a key belongs to, used to flag partial periods */
-function periodLastWeekday(k,g){
-  let end;
-  if(g==='day')return k;
-  if(g==='month'){const[y,m]=k.split('-').map(Number);end=new Date(Date.UTC(y,m,0));}
-  else if(g==='quarter'){const[y,q]=k.split(' Q').map(Number);end=new Date(Date.UTC(y,q*3,0));}
-  else {end=new Date(k.slice(3)+'T00:00:00Z');end.setUTCDate(end.getUTCDate()+6);}
-  while(end.getUTCDay()===0||end.getUTCDay()===6)end.setUTCDate(end.getUTCDate()-1);
-  return end.toISOString().slice(0,10);
-}
-/* v2: label with "(partial)" when the data stops before the period's last weekday */
-function periodLabelP(k,g,lastDate){
-  const base=periodLabel(k,g);
-  if(!lastDate||g==='day')return base;
-  return (periodKey(lastDate,g)===k&&lastDate<periodLastWeekday(k,g))?base+' (partial)':base;
-}
 function quarterOf(iso){
   const [y,m]=iso.split('-').map(Number), q=Math.floor((m-1)/3);
   const s=new Date(Date.UTC(y,q*3,1)), e=new Date(Date.UTC(y,q*3+3,0));
   return {label:`${y} Q${q+1}`,start:s.toISOString().slice(0,10),end:e.toISOString().slice(0,10)};
 }
-/* v2: working days skip weekends and that team's holidays */
-function workdaysBetween(a,b,team){
-  const hol=new Set(HOLIDAYS[team]||[]);
+function weekdaysBetween(a,b){
   let n=0,d=new Date(a+'T00:00:00Z'),z=new Date(b+'T00:00:00Z');
-  while(d<=z){ const w=d.getUTCDay(), iso=d.toISOString().slice(0,10);
-    if(w>0&&w<6&&!hol.has(iso))n++; d.setUTCDate(d.getUTCDate()+1); }
+  while(d<=z){ const w=d.getUTCDay(); if(w>0&&w<6)n++; d.setUTCDate(d.getUTCDate()+1); }
   return n;
 }
 const confClass=c=>{c=String(c||'');
   if(/^UNPARS/i.test(c))return['bad','unusable'];
   if(/^(ASSUMED|FLAG)/i.test(c))return['warn','assumed'];
   return['ok','literal'];};
-
-/* ============================ v3 helpers ============================ */
-const hm=s=>{const x=hms(s);return x.slice(0,x.lastIndexOf(':'));};
-const pct0=v=>v==null||!isFinite(v)?'–':(v*100).toFixed(0)+'%';
-function addDays(iso,n){const d=new Date(iso+'T00:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);}
-function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00Z')-new Date(a+'T00:00:00Z'))/86400000);}
-const fmtD=iso=>{const[y,m,d]=iso.split('-');return `${MON[+m-1]} ${+d}, ${y}`;};
-const csmLink=a=>`<span class="csm" data-a="${esc(a)}">${esc(a)}</span>`;
-function listOK(m){
-  const C=selected('fCoach'),T=selected('fTeam'),St=selected('fStatus'),A=selected('fAgent');
-  return (!C.length||C.includes(m.coach))&&(!T.length||T.includes(m.team))&&
-         (!St.length||St.includes(m.status))&&(!A.length||A.includes(m.agent));
-}
-function kpiVals(rows){
-  const t=rollup(rows,()=> 'all')[0]||{hand:0,adj:0,days:0,recs:0,adjusted:0,avg:0,nAgents:0};
-  return {adjusted:t.adjusted,hand:t.hand,adj:t.adj,share:t.adjusted?t.adj/t.adjusted:null,
-          days:t.days,avg:t.days?t.avg:null,recs:t.recs,nAgents:t.nAgents};
-}
-function countBy(list,fn){
-  const m=new Map(); list.forEach(o=>{const k=fn(o);m.set(k,(m.get(k)||0)+1);});
-  return [...m.entries()].sort((a,b)=>b[1]-a[1]||String(a[0]).localeCompare(String(b[0])));
-}
-function sparkSVG(vals,color){
-  const v=vals.filter(x=>x!=null&&isFinite(x)); if(v.length<2)return '';
-  const mn=Math.min(...v),mx=Math.max(...v),rg=mx-mn||1;
-  const pts=v.map((x,i)=>`${(i/(v.length-1)*100).toFixed(2)},${(26-(x-mn)/rg*24).toFixed(2)}`).join(' ');
-  return `<svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><title>Weekly trend in the selected range</title>`+
-    `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>`;
-}
-/* Dashed reference line for Chart.js. axis 'x' draws a vertical line, 'y' a horizontal one. */
-const refLine={id:'refLine',afterDatasetsDraw(ch,_a,o){
-  if(!o||o.v==null||!isFinite(o.v))return;
-  const c=ch.ctx,{left,right,top,bottom}=ch.chartArea;
-  c.save(); c.strokeStyle=o.color; c.lineWidth=1.5; c.setLineDash([5,4]);
-  c.font='700 11px Inter,-apple-system,sans-serif'; c.beginPath();
-  /* label sits on a solid chip so it stays readable over bars */
-  const chip=(tx,ty,align)=>{const w=c.measureText(o.label).width+10,h=17,x0=align==='right'?tx-w:tx;
-    c.setLineDash([]); c.fillStyle=getComputedStyle(document.body).getPropertyValue('--card').trim()||'#fff';
-    c.fillRect(x0,ty-h+4,w,h); c.strokeStyle=o.color; c.lineWidth=1; c.strokeRect(x0,ty-h+4,w,h);
-    c.fillStyle=o.color; c.textAlign='left'; c.fillText(o.label,x0+5,ty);};
-  if(o.axis==='y'){const y=ch.scales.y.getPixelForValue(o.v); c.moveTo(left,y); c.lineTo(right,y); c.stroke();
-    chip(right-2,y-6,'right');}
-  else {const x=ch.scales.x.getPixelForValue(o.v); c.moveTo(x,top); c.lineTo(x,bottom); c.stroke();
-    chip(x+6,bottom-6,'left');}
-  c.restore();}};
-const SLA_BUCKETS=[
-  ['behind','Behind pace','bad',o=>o.state==='Behind pace'],
-  ['on','On or above pace','ok',o=>o.state==='On or above pace'],
-  ['gap','Attendance gap','warn',o=>o.gap],
-  ['none','No active days','gray',o=>o.state==='No active days']];
-/* v3: SLA in one place so the SLA tab, summary strip and drawer agree */
-function computeSLA(ignoreLists){
-  const lastRowDate=S.rows.map(r=>r.date).sort().pop()||'';
-  if(!lastRowDate)return null;
-  const toV=$('to').value, anchor=(toV&&toV<lastRowDate)?toV:lastRowDate;
-  const Q=quarterOf(anchor), qEnd=anchor<Q.end?anchor:Q.end, target=SLA_HOURS*3600;
-  const teamDays=new Map();
-  const tdays=team=>{ if(!teamDays.has(team))teamDays.set(team,{
-      wd:workdaysBetween(Q.start,Q.end,team), el:workdaysBetween(Q.start,qEnd,team)});
-    return teamDays.get(team); };
-  const ok=m=>ignoreLists||listOK(m);
-  const byA=new Map();
-  [...S.roster.values()].filter(ok).forEach(m=>byA.set(m.agent,
-    {agent:m.agent,coach:m.coach,team:m.team,status:m.status,qtd:0,days:0}));
-  S.rows.forEach(r=>{ if(r.date<Q.start||r.date>qEnd||!byA.has(r.agent))return;
-    const o=byA.get(r.agent); o.qtd+=r.total; o.days+=r.active; });
-  const sla=[...byA.values()].map(o=>{
-    const td=tdays(o.team), rate=target/td.wd;
-    const pace=o.days?o.qtd/(rate*o.days):null, cal=td.el?o.qtd/(rate*td.el):null;
-    const state=o.days===0?'No active days':(pace>=1?'On or above pace':'Behind pace');
-    return {...o,rate,elapsed:td.el,exp:rate*o.days,calExp:rate*td.el,pace,cal,state,
-      gap:pace!=null&&cal!=null&&pace-cal>=0.25,att:o.qtd/target,proj:o.days?o.qtd/o.days*td.wd:0};});
-  return {Q,qEnd,target,teamDays,sla};
-}
 
 /* ============================ parsing ============================ */
 function readTimeZone(rows,fname){
@@ -693,6 +476,37 @@ function parseInteractions(wb,fname){
   flush();
   return n;
 }
+/* The "Agent Time On Status" export: one CSV row per agent per day, carrying
+   Handling Time plus Wrap Up, Available, Working Offline, On Break and Logged In.
+   Its time zone is the offset on Start Time (-05:00 Chicago, +10:00 Sydney),
+   not a metadata line. */
+function parseStatusCsv(text,fname){
+  const objs=parseCSV(text);
+  if(!objs.length){S.warn.push(fname+': no rows');return 0;}
+  const keys=Object.keys(objs[0]);
+  const k=n=>keys.find(x=>x===n)||keys.find(x=>x.includes(n));
+  const cS=k('start time'),cA=k('agent'),cG=k('group'),cH=k('handling time'),
+        cW=k('wrap up time'),cL=k('logged in time'),cB=k('on break time'),
+        cO=k('working offline time'),cV=k('available time'),cI=k('agent id');
+  if(!cS||!cA||!cH){S.warn.push(fname+': missing Start Time, Agent or Handling Time');return 0;}
+  const off=String(objs[0][cS]||'').match(/([+-]\d{2}):?\d{2}$/);
+  S.tz.set(fname, off ? (off[1].startsWith('+') ? `(GMT${off[1]}) Australia/Sydney`
+                                                : `(GMT${off[1]}) America/Chicago`)
+                      : 'not stated');
+  let n=0;
+  objs.forEach(o=>{
+    const a=String(o[cA]||'').trim(); if(!a)return;
+    const iso=String(o[cS]||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))return;
+    S.handling.push({date:iso,agent:a,group:cG?String(o[cG]||'').trim():'',
+      agentId:cI?String(o[cI]||'').trim():'',
+      sec:cellSeconds(o[cH]),
+      wrap:cW?cellSeconds(o[cW]):0, loggedIn:cL?cellSeconds(o[cL]):0,
+      onBreak:cB?cellSeconds(o[cB]):0, offline:cO?cellSeconds(o[cO]):0,
+      available:cV?cellSeconds(o[cV]):0, src:fname});
+    n++;
+  });
+  return n;
+}
 function csvRows(text){
   const out=[];let row=[],cur='',q=false;
   text=text.replace(/^﻿/,'');
@@ -743,7 +557,9 @@ async function loadFromRepo(){
   for(const f of (man.handling||[])){
     const r=await fetch(DATA_BASE+f,{cache:'no-store'});
     if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
-    const n=parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
+    const n=/\.csv$/i.test(f)
+      ? parseStatusCsv(await r.text(),f)
+      : parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
     S.files.push(`${f} (${n} rows)`);
   }
   for(const f of (man.interactions||[])){
@@ -769,6 +585,10 @@ function applyExclusions(){
   S.adj=S.adj.filter(a=>!ex.has(a.agent));
   S.inter=S.inter.filter(a=>!ex.has(a.agent));
   ex.forEach(n=>S.unknownP.delete(n));
+  // Drop them from the roster too, so tabs that list CSMs rather than rows
+  // (the SLA tab) do not seed an empty row for someone who is excluded.
+  // Safe here: parsing has already run, so their interaction legs were
+  // recognised as agent legs and then filtered out above, not flagged unknown.
   ex.forEach(n=>S.roster.delete(n));
 }
 async function loadFromFiles(list){
@@ -776,7 +596,10 @@ async function loadFromFiles(list){
   const arr=[...list], csvs=arr.filter(f=>/\.csv$/i.test(f.name));
   for(const f of csvs){
     const txt=await f.text(), objs=parseCSV(txt), h=Object.keys(objs[0]||{});
-    if(h.includes('coach')||h.includes('roster')){loadRoster(objs);S.files.push(f.name+' (roster)');}
+    if(h.some(x=>x.includes('handling time'))){
+      const n=parseStatusCsv(txt,f.name); S.files.push(`${f.name} (${n} rows)`);
+    }
+    else if(h.includes('coach')||h.includes('roster')){loadRoster(objs);S.files.push(f.name+' (roster)');}
     else if(h.includes('seconds')||h.includes('length_text')){loadAdj(objs);S.files.push(f.name+' (adjustments)');}
     else S.warn.push(f.name+': not recognised as roster or adjustments, ignored');
   }
@@ -812,10 +635,8 @@ function buildRows(){
     const r=m.get(k); r.adj+=(a.sec||0); r.n++;
   });
   return [...m.values()].map(r=>{const md=meta(r.agent);
-    /* v2: active day counts adjustment-only days when COUNT_ADJ_ONLY_DAYS is true */
-    const act=r.hand>0||(COUNT_ADJ_ONLY_DAYS&&r.adj>0);
     return {...r,coach:md.coach,team:md.team,status:md.status,
-            group:r.group||md.group,total:r.hand+r.adj,active:act?1:0};});
+            group:r.group||md.group,total:r.hand+r.adj,active:r.hand>0?1:0};});
 }
 function selected(id){return [...(S.filters[id]||[])];}
 function filtered(){
@@ -841,16 +662,13 @@ function sortBy(list,[k,dir]){
     const x=a[k],y=b[k];
     if(typeof x==='string'||typeof y==='string')
       return String(x).localeCompare(String(y))*dir;
-    return ((x==null?-Infinity:x)-(y==null?-Infinity:y))*dir||0;
+    return ((x||0)-(y||0))*dir;
   });
 }
 function table(el,cols,rows,key,foot){
   const [sk,sd]=S.sort[key];
-  /* v2: only the first column with the active sort key shows an arrow */
-  let arrowShown=false;
-  const arrow=c=>{ if(c.k!==sk||arrowShown)return ''; arrowShown=true; return sd>0?' ▲':' ▼'; };
   el.innerHTML='<thead><tr>'+cols.map(c=>
-    `<th class="${c.l?'l':''}" data-k="${c.k}">${esc(c.t)}${arrow(c)}</th>`).join('')+'</tr></thead>'+
+    `<th class="${c.l?'l':''}" data-k="${c.k}">${esc(c.t)}${c.k===sk?(sd>0?' ▲':' ▼'):''}</th>`).join('')+'</tr></thead>'+
     '<tbody>'+rows.map(r=>'<tr>'+cols.map(c=>
       `<td class="${c.l?'l':''}">${c.f(r)}</td>`).join('')+'</tr>').join('')+'</tbody>'+
     (foot?'<tfoot><tr>'+cols.map(c=>`<td class="${c.l?'l':''}">${c.ft?c.ft(foot):''}</td>`).join('')+'</tr></tfoot>':'');
@@ -871,53 +689,24 @@ function render(){
   const rows=filtered(), g=$('gran').value;
   const css=getComputedStyle(document.body);
   const cH=css.getPropertyValue('--chart1').trim(), cA=css.getPropertyValue('--chart2').trim();
-  const lastRowDate=S.rows.map(r=>r.date).sort().pop()||'';
-  const lastInterDate=S.inter.map(r=>r.date).sort().pop()||'';
 
-  /* KPIs  (v2: decimal hours lead, H:MM:SS in the note) */
+  /* KPIs */
   const tot=rollup(rows,()=> 'all')[0]||{hand:0,adj:0,days:0,recs:0,adjusted:0,avg:0,nAgents:0};
   const dates=rows.filter(r=>r.hand>0).map(r=>r.date).sort();
-  /* v3: change vs. the prior period of equal length, and weekly sparklines */
-  const fV=$('from').value,tV=$('to').value;
-  const cur=kpiVals(rows);
-  let prev=null,prevLbl='';
-  if(fV&&tV){
-    const n=daysBetween(fV,tV)+1, pt=addDays(fV,-1), pf=addDays(fV,-n);
-    prevLbl=fmtD(pf)+' to '+fmtD(pt);
-    const pr=S.rows.filter(r=>r.date>=pf&&r.date<=pt&&listOK(r));
-    if(pr.length)prev=kpiVals(pr);
-  }
-  const wk=new Map();
-  rows.forEach(r=>{const k=periodKey(r.date,'week');if(!wk.has(k))wk.set(k,[]);wk.get(k).push(r);});
-  const series=[...wk.keys()].sort().map(k=>kpiVals(wk.get(k)));
-  const deltaHTML=(key,kind,good)=>{
-    const c=cur[key],p=prev?prev[key]:null;
-    if(!prev||c==null||p==null||(kind==='rel'&&!p))
-      return '';   /* no comparable prior data: show nothing rather than a placeholder */
-    const d=kind==='rel'?(c-p)/Math.abs(p)*100:(c-p)*100;
-    const flat=Math.abs(d)<0.05;
-    const cls=flat||!good?'flat':(d>0?'up':'down');
-    return `<div class="delta ${cls}" title="Prior period: ${esc(prevLbl)}">${flat?'■':(d>0?'▲':'▼')} `+
-      `${Math.abs(d).toFixed(1)}${kind==='rel'?'%':' pts'} vs prior period</div>`;
-  };
   $('kpis').innerHTML=[
-    ['Adjusted talk time',hrsL(tot.adjusted),hms(tot.adjusted)+' h:mm:ss','adjusted','rel',1],
-    ['8x8 handling',hrsL(tot.hand),pct(tot.hand,tot.adjusted)+' of total','hand','rel',1],
-    ['Asana adjustments',hrsL(tot.adj),tot.recs+' record'+(tot.recs===1?'':'s'),'adj','rel',0],
-    ['Adjustment share',pct(tot.adj,tot.adjusted),'of adjusted talk time','share','pp',0],
-    ['Active agent-days',tot.days.toLocaleString(),tot.nAgents+' CSMs with activity','days','rel',0],
-    ['Average per active day',hms(tot.avg),'per day present','avg','rel',1]
-  ].map(([l,v,n,key,kind,good])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div>`+
-    `${deltaHTML(key,kind,good)}<div class="note">${esc(n)}</div>${sparkSVG(series.map(s=>s[key]),cH)}</div>`).join('');
-  /* v2: label states what is being counted */
-  $('covers').textContent=dates.length?`${dates[0]} to ${dates[dates.length-1]} · ${tot.nAgents} CSMs with activity`:'no rows in the current selection';
-  $('agentHint').textContent='Average per active day is adjusted talk time divided by days with '+
-    (COUNT_ADJ_ONLY_DAYS?'8x8 handling time or an Asana adjustment.':'any recorded handling time.');
+    ['Adjusted talk time',hms(tot.adjusted),hrs(tot.adjusted)+' hours'],
+    ['8x8 handling',hms(tot.hand),pct(tot.hand,tot.adjusted)+' of total'],
+    ['Asana adjustments',hms(tot.adj),tot.recs+' record'+(tot.recs===1?'':'s')],
+    ['Adjustment share',pct(tot.adj,tot.adjusted),'of adjusted talk time'],
+    ['Active agent-days',tot.days.toLocaleString(),tot.nAgents+' CSMs'],
+    ['Average per active day',hms(tot.avg),'per day present']
+  ].map(([l,v,n])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
+  $('covers').textContent=dates.length?`${dates[0]} to ${dates[dates.length-1]} · ${tot.nAgents} CSMs`:'no rows in the current selection';
 
   /* trend */
   const per=sortBy(rollup(rows,r=>periodKey(r.date,g)),S.sort.period);
   const chron=rollup(rows,r=>periodKey(r.date,g)).sort((a,b)=>a.key.localeCompare(b.key));
-  drawChart('chart1',{type:'bar',data:{labels:chron.map(p=>periodLabelP(p.key,g,lastRowDate)),
+  drawChart('chart1',{type:'bar',data:{labels:chron.map(p=>periodLabel(p.key,g)),
     datasets:[{label:'8x8 handling',data:chron.map(p=>p.hand/3600),backgroundColor:cH,borderRadius:3},
               {label:'Asana adjustments',data:chron.map(p=>p.adj/3600),backgroundColor:cA,borderRadius:3}]},
     options:{maintainAspectRatio:false,responsive:true,
@@ -926,7 +715,7 @@ function render(){
       plugins:{legend:{position:'bottom'},tooltip:{callbacks:{
         label:c=>c.dataset.label+': '+hms(c.raw*3600),
         footer:it=>'Total: '+hms(it.reduce((s,x)=>s+x.raw*3600,0))}}}}});
-  const pc=[{k:'key',t:'Period',l:1,f:r=>esc(periodLabelP(r.key,g,lastRowDate)),ft:()=>'Total'},
+  const pc=[{k:'key',t:'Period',l:1,f:r=>esc(periodLabel(r.key,g)),ft:()=>'Total'},
     {k:'nAgents',t:'CSMs',f:r=>r.nAgents,ft:f=>f.nAgents},
     {k:'hand',t:'Handling',f:r=>hms(r.hand),ft:f=>hms(f.hand)},
     {k:'adj',t:'Adjustments',f:r=>hms(r.adj),ft:f=>hms(f.adj)},
@@ -941,7 +730,7 @@ function render(){
   /* by agent */
   const ag=sortBy(rollup(rows,r=>r.agent),S.sort.agent).map(r=>{const m=meta(r.key);return{...r,...m,agent:r.key};});
   table($('t-agent'),[
-    {k:'agent',t:'CSM',l:1,f:r=>csmLink(r.agent),ft:()=>'Total'},
+    {k:'agent',t:'CSM',l:1,f:r=>esc(r.agent),ft:()=>'Total'},
     {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:f=>f.nAgents+' CSMs'},
     {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
     {k:'status',t:'Status',l:1,f:r=>r.status==='Active'?'<span class="pill ok">Active</span>':`<span class="pill gray">${esc(r.status)}</span>`},
@@ -952,35 +741,6 @@ function render(){
     {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
     {k:'avg',t:'Avg / active day',f:r=>hms(r.avg),ft:f=>hms(f.avg)},
     {k:'recs',t:'Adj records',f:r=>r.recs,ft:f=>f.recs}],ag,'agent',tot);
-
-  /* v3: ranked bars with selection-average line, plus top five / bottom five */
-  const cO=css.getPropertyValue('--orange').trim(), cM=css.getPropertyValue('--muted').trim();
-  const rk=ag.filter(r=>r.days>0).sort((a,b)=>b.avg-a.avg);
-  $('rankBox').style.height=Math.max(220,rk.length*19+70)+'px';
-  drawChart('chart5',{type:'bar',
-    data:{labels:rk.map(r=>r.agent),datasets:[{label:'Average per active day',data:rk.map(r=>r.avg/3600),
-      backgroundColor:rk.map(r=>r.avg>=tot.avg?cH:cM),borderRadius:3}]},
-    options:{maintainAspectRatio:false,indexAxis:'y',
-      onClick:(e,els)=>{if(els.length)openDrawer(rk[els[0].index].agent);},
-      onHover:(e,els)=>{e.native.target.style.cursor=els.length?'pointer':'default';},
-      plugins:{legend:{display:false},
-        refLine:{v:tot.avg/3600,axis:'x',color:cO,label:'Selection avg '+hm(tot.avg)},
-        tooltip:{callbacks:{label:c=>hms(c.raw*3600)+' per active day · '+rk[c.dataIndex].days+' active days'}}},
-      scales:{x:{title:{display:true,text:'Hours per active day'}},
-              y:{grid:{display:false},ticks:{autoSkip:false,font:{size:11}}}}},
-    plugins:[refLine]});
-  const elig=rk.filter(r=>r.days>=MIN_RANK_DAYS);
-  const rkTable=(id,list)=>{
-    $(id).innerHTML='<thead><tr><th class="l">#</th><th class="l">CSM</th><th class="l">Coach</th><th>Avg / day</th><th>Vs avg</th><th>Days</th></tr></thead><tbody>'+
-      (list.length?list.map(([r,i])=>{const d=tot.avg?(r.avg-tot.avg)/tot.avg*100:0;
-        return `<tr><td class="l">${i}</td><td class="l">${csmLink(r.agent)}</td><td class="l">${esc(r.coach)}</td>`+
-          `<td>${hm(r.avg)}</td><td><span class="pill ${d>=0?'ok':'bad'}">${d>=0?'+':''}${d.toFixed(0)}%</span></td><td>${r.days}</td></tr>`;}).join('')
-        :'<tr><td class="l" colspan="6">Not enough CSMs with '+MIN_RANK_DAYS+' or more active days.</td></tr>')+'</tbody>';
-  };
-  rkTable('t-top',elig.slice(0,5).map((r,i)=>[r,i+1]));
-  rkTable('t-bot',elig.slice(-5).reverse().map((r,i)=>[r,elig.length-i]));
-  const rnote=`Ranked on average per active day. CSMs need ${MIN_RANK_DAYS} or more active days in the range to qualify (${elig.length} do).`;
-  $('rankNote1').textContent=rnote; $('rankNote2').textContent=rnote;
 
   /* by coach */
   const co=sortBy(rollup(rows,r=>r.coach),S.sort.coach);
@@ -1055,7 +815,7 @@ function render(){
   const ichron=iroll(x=>periodKey(x.date,g)).sort((a,b)=>a.key.localeCompare(b.key));
   const SER=[['Accepted',cA],['Rejected','#c0504d'],['Offer Timeout',css.getPropertyValue('--amber').trim()],
              ['Abandoned','#8064a2'],['Customer Hang Up','#9aa8bf']];
-  drawChart('chart4',{type:'bar',data:{labels:ichron.map(p=>periodLabelP(p.key,g,lastInterDate)),
+  drawChart('chart4',{type:'bar',data:{labels:ichron.map(p=>periodLabel(p.key,g)),
     datasets:SER.map(([k,col])=>({label:k,data:ichron.map(p=>p[k]||0),backgroundColor:col,borderRadius:3}))},
     options:{maintainAspectRatio:false,responsive:true,
       scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,title:{display:true,text:'Offers'}}},
@@ -1071,74 +831,65 @@ function render(){
     {k:'Abandoned',t:'Abandoned',f:r=>r.Abandoned||'–',ft:f=>f.Abandoned},
     {k:'Customer Hang Up',t:'Cust. hang up',f:r=>r['Customer Hang Up']||'–',ft:f=>f['Customer Hang Up']}];
   const ia=sortBy(iroll(x=>x.agent),S.sort.iagent).map(r=>({...r,coach:meta(r.key).coach,team:meta(r.key).team}));
-  table($('t-iagent'),[{k:'key',t:'CSM',l:1,f:r=>csmLink(r.key),ft:()=>'Total'},
+  table($('t-iagent'),[icols('CSM')[0],
     {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:f=>f.nAgents+' CSMs'},
     {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
     ...icols('CSM').slice(2)],ia,'iagent',itot);
   table($('t-icoach'),icols('Coach'),sortBy(iroll(x=>meta(x.agent).coach),S.sort.iagent),'iagent',itot);
 
-  /* SLA (always quarter to date, ignores the date range above)
-     v2: per-team working days with holidays, plus pace against calendar days elapsed */
-  /* v2: SLA stops at the last day with talk time data, so days not yet exported
-     (or covered only by the interactions file) do not count as elapsed.
-     v3: the calculation now lives in computeSLA() so every view agrees. */
-  const R=computeSLA(false);
-  if(R){
-    const {Q,qEnd,target,teamDays,sla}=R;
-    const teamTxt=[...teamDays.entries()].map(([tm,d])=>
-      `${esc(tm||'No team')}: ${d.wd} working days, ${hms(target/d.wd)} per day, ${d.el} elapsed`).join(' · ');
+  /* SLA — always quarter to date, ignores the date range above */
+  const anchor=$('to').value||(S.rows.map(x=>x.date).sort().pop()||'');
+  if(anchor){
+    const Q=quarterOf(anchor);
+    const qEnd=anchor<Q.end?anchor:Q.end;
+    const wd=weekdaysBetween(Q.start,Q.end);
+    const target=SLA_HOURS*3600, rate=target/wd;
     $('slaHint').innerHTML=`Target <strong>${SLA_HOURS} hours per CSM</strong> for <strong>${esc(Q.label)}</strong> `+
-      `(${esc(Q.start)} to ${esc(Q.end)}). ${teamTxt}. Holidays come from the HOLIDAYS list in the code and should be confirmed with HR. `+
+      `(${esc(Q.start)} to ${esc(Q.end)}, ${wd} weekdays, so ${hms(rate)} per working day). `+
       `Figures are quarter to date through ${esc(qEnd)} and <strong>ignore the date range above</strong>; the coach, team, status and agent filters still apply.`;
-    const sumOf=list=>list.reduce((a,o)=>({qtd:a.qtd+o.qtd,exp:a.exp+o.exp,calExp:a.calExp+o.calExp,days:a.days+o.days}),{qtd:0,exp:0,calExp:0,days:0});
-    const all=sumOf(sla);
+    const inQ=S.rows.filter(r=>r.date>=Q.start&&r.date<=qEnd&&
+      (!C.length||C.includes(r.coach))&&(!T.length||T.includes(r.team))&&
+      (!St.length||St.includes(r.status))&&(!A.length||A.includes(r.agent)));
+    const byA=new Map();
+    const roster=[...S.roster.values()].filter(m=>
+      (!C.length||C.includes(m.coach))&&(!T.length||T.includes(m.team))&&
+      (!St.length||St.includes(m.status))&&(!A.length||A.includes(m.agent)));
+    roster.forEach(m=>byA.set(m.agent,{agent:m.agent,coach:m.coach,team:m.team,status:m.status,qtd:0,days:0}));
+    inQ.forEach(r=>{ if(!byA.has(r.agent))return;
+      const o=byA.get(r.agent); o.qtd+=r.total; o.days+=r.active; });
+    const sla=[...byA.values()].map(o=>({...o,exp:rate*o.days,
+      pace:o.days?o.qtd/(rate*o.days):null, att:o.qtd/target,
+      proj:o.days?o.qtd/o.days*wd:0}));
+    const st=o=>o.days===0?'No active days':(o.pace>=1?'On or above pace':'Behind pace');
+    const sum=sla.reduce((a,o)=>({qtd:a.qtd+o.qtd,exp:a.exp+o.exp,days:a.days+o.days}),{qtd:0,exp:0,days:0});
+    const nOn=sla.filter(o=>st(o)==='On or above pace').length,
+          nBe=sla.filter(o=>st(o)==='Behind pace').length,
+          nNo=sla.filter(o=>st(o)==='No active days').length;
     $('slakpis').innerHTML=[
-      ['Talk time QTD',hrsL(all.qtd),hms(all.qtd)+' h:mm:ss'],
-      ['Pace (days worked)',all.exp?pct0(all.qtd/all.exp):'–','100% is on target'],
-      ['Pace (calendar)',all.calExp?pct0(all.qtd/all.calExp):'–','includes time away'],
-      ['CSMs in view',sla.length,'roster CSMs matching the filters']
+      ['Talk time QTD',hms(sum.qtd),hrs(sum.qtd)+' hours'],
+      ['Expected to date',hms(sum.exp),'for days actually worked'],
+      ['Pace',sum.exp?((sum.qtd/sum.exp)*100).toFixed(0)+'%':'–','100% is on target'],
+      ['On or above pace',nOn,'of '+sla.length+' CSMs'],
+      ['Behind pace',nBe,nBe?'need attention':'none'],
+      ['No active days',nNo,'no recorded handling time']
     ].map(([l,v,n])=>`<div class="kpi"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
-    /* v3: status tiles; click to filter the table, click again to clear */
-    $('slabuckets').innerHTML=SLA_BUCKETS.map(([k,lab,cls,fn])=>{
-      const mem=sla.filter(fn);
-      const bc=countBy(mem,o=>o.coach).slice(0,3).map(([c,n])=>`${c} ${n}`).join(' · ');
-      return `<div class="kpi bucket ${cls}${S.slaBucket===k?' on':''}" data-b="${k}" role="button" tabindex="0">`+
-        `<div class="lab">${lab}</div><div class="val">${mem.length}</div><div class="note">${esc(bc||'none')}</div></div>`;
-    }).join('');
-    $('slabuckets').querySelectorAll('.bucket').forEach(el=>{
-      const go=()=>{S.slaBucket=S.slaBucket===el.dataset.b?null:el.dataset.b;render();};
-      el.onclick=go; el.onkeydown=e=>{if(e.key==='Enter')go();};});
-    const act=SLA_BUCKETS.find(b=>b[0]===S.slaBucket);
-    const shown=act?sla.filter(act[3]):sla;
-    $('slaFilter').innerHTML=act
-      ?`Showing <strong>${esc(act[1])}</strong> only (${shown.length} CSMs). <span class="linkish" id="slaClear">Show all</span>`
-      :'Click a tile to filter the table. Each tile lists the coaches with the most CSMs in it. '+
-       'Attendance gap means calendar pace is 25 or more points below pace on days worked.';
-    if(act)$('slaClear').onclick=()=>{S.slaBucket=null;render();};
-    const sum=sumOf(shown);
-    const pctCell=pct0;
     table($('t-sla'),[
-      {k:'agent',t:'CSM',l:1,f:r=>csmLink(r.agent),ft:()=>'Total'},
-      {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:()=>shown.length+' CSMs'},
+      {k:'agent',t:'CSM',l:1,f:r=>esc(r.agent),ft:()=>'Total'},
+      {k:'coach',t:'Coach',l:1,f:r=>esc(r.coach),ft:()=>sla.length+' CSMs'},
       {k:'team',t:'Team',l:1,f:r=>esc(r.team)},
-      {k:'days',t:'Active days',f:r=>r.days+' of '+r.elapsed,ft:f=>f.days},
+      {k:'days',t:'Active days',f:r=>r.days,ft:f=>f.days},
       {k:'qtd',t:'Talk time QTD',f:r=>hms(r.qtd),ft:f=>hms(f.qtd)},
       {k:'exp',t:'Expected to date',f:r=>hms(r.exp),ft:f=>hms(f.exp)},
-      /* v3: rounded down so 99.9% never displays as 100% next to a "Behind pace" status */
-      {k:'pace',t:'Pace (days worked)',f:r=>r.pace==null?'–':Math.floor(r.pace*100)+'%',
+      {k:'pace',t:'Pace',f:r=>r.pace==null?'–':(r.pace*100).toFixed(0)+'%',
         ft:f=>f.exp?((f.qtd/f.exp)*100).toFixed(0)+'%':'–'},
-      {k:'cal',t:'Pace (calendar)',f:r=>{ if(r.cal==null)return '–';
-          const gap=r.pace!=null&&r.pace-r.cal>=0.25;
-          return gap?`<span class="pill warn" title="Large gap between the two pace measures, likely time away">${pctCell(r.cal)}</span>`:pctCell(r.cal);},
-        ft:f=>f.calExp?((f.qtd/f.calExp)*100).toFixed(0)+'%':'–'},
-      {k:'pace',t:'Status',l:1,f:r=>{const s=r.state;
+      {k:'pace',t:'Status',l:1,f:r=>{const s=st(r);
         return `<span class="pill ${s==='On or above pace'?'ok':s==='Behind pace'?'bad':'warn'}">${s}</span>`;}},
       {k:'att',t:'% of '+SLA_HOURS+'h',f:r=>(r.att*100).toFixed(0)+'%',
-        ft:f=>shown.length?((f.qtd/(target*shown.length))*100).toFixed(0)+'%':'–'},
+        ft:f=>((f.qtd/(target*sla.length))*100).toFixed(0)+'%'},
       {k:'proj',t:'Projected quarter',f:r=>hms(r.proj)},
       {k:'proj',t:'Projection',l:1,f:r=>r.days===0?'–':
         `<span class="pill ${r.proj>=target?'ok':'bad'}">${r.proj>=target?'clears':'misses'}</span>`}
-    ],sortBy(shown,S.sort.sla),'sla',sum);
+    ],sortBy(sla,S.sort.sla),'sla',sum);
   }
 
   /* data quality */
@@ -1150,13 +901,6 @@ function render(){
   const unusable=S.adj.filter(a=>/^UNPARS/i.test(a.conf)||a.sec==null).length;
   const dupe=(()=>{const m=new Map();S.handling.forEach(h=>{const k=h.agent+h.date;m.set(k,(m.get(k)||0)+1);});
     return [...m.values()].filter(v=>v>1).length;})();
-  /* v2: duplicate adjustments (same agent, date, applied seconds and entered text) */
-  const adjDupes=(()=>{const m=new Map();S.adj.forEach(a=>{const k=[a.agent,a.date,a.sec,a.text].join('\u0000');
-      m.set(k,(m.get(k)||[]).concat([a]));});
-    return [...m.values()].filter(v=>v.length>1);})();
-  /* v2: agent-days with Asana time but no 8x8 time */
-  const adjOnly=S.rows.filter(r=>r.hand===0&&r.adj>0);
-  const rosterNoData=[...S.roster.keys()].filter(a=>!S.rows.some(r=>r.agent===a));
   dq.push(['Handling rows parsed',S.handling.length,'ok','From '+(S.files.filter(f=>/rows\)/.test(f)).length)+' export file(s)']);
   if(S.exclude.length){
     const det=[...S.excluded.entries()].map(([n,e])=>`${n} (${e.rows} row${e.rows===1?'':'s'}, ${hms(e.sec)})`).join('; ');
@@ -1166,8 +910,6 @@ function render(){
   }
   dq.push(['Agents in 8x8 but missing from roster.csv',noRoster.length,noRoster.length?'bad':'ok',
     noRoster.length?'Coach, team and status unknown: '+noRoster.slice(0,6).join(', ')+(noRoster.length>6?' …':''):'Every agent is on the roster']);
-  dq.push(['Roster CSMs with no data in any file',rosterNoData.length,rosterNoData.length?'warn':'ok',
-    rosterNoData.length?'Listed on the SLA tab with no active days: '+rosterNoData.join(', '):'Every roster CSM has data']);
   dq.push(['Roster agents with no coach',noCoach.length,noCoach.length?'warn':'ok',
     noCoach.length?noCoach.slice(0,6).join(', '):'Every CSM maps to a coach']);
   dq.push(['Adjustment records for an unknown agent',orphanAdj.length,orphanAdj.length?'bad':'ok',
@@ -1176,14 +918,6 @@ function render(){
     'The "Length of call" field in Asana is free text. A validated duration field would remove this.']);
   dq.push(['Adjustments that could not be converted',unusable,unusable?'bad':'ok',
     unusable?'Excluded from all totals. See the Adjustments tab for the raw text.':'All records converted']);
-  dq.push(['Possible duplicate adjustments',adjDupes.length,adjDupes.length?'warn':'ok',
-    adjDupes.length?'Same CSM, date, duration and text appear more than once, so the time may be counted twice: '+
-      adjDupes.map(v=>`${v[0].agent} ${v[0].date} (${v.length}x)`).join('; ')+
-      '. Adding the Asana task ID to adjustments.csv would make this check exact.'
-      :'No repeated adjustment records']);
-  dq.push(['Days with Asana time but no 8x8 time',adjOnly.length,'ok',
-    (COUNT_ADJ_ONLY_DAYS?'Counted as active days. ':'Not counted as active days. ')+
-    hms(adjOnly.reduce((s,r)=>s+r.adj,0))+' of talk time on these days. Change COUNT_ADJ_ONLY_DAYS to switch.']);
   dq.push(['Duplicate agent-day rows in the 8x8 files',dupe,dupe?'bad':'ok',
     dupe?'The same agent and date appears in more than one export, which double counts. Check for overlapping date ranges.':'No agent-day appears twice']);
   if(S.inter.length||S.unknownP.size){
@@ -1213,108 +947,6 @@ function render(){
     dq.map(([c,n,s,d])=>`<tr><td class="l">${esc(c)}</td><td>${n===''?'':n}</td>
       <td class="l"><span class="pill ${s}">${s==='ok'?'pass':s==='warn'?'review':'fix'}</span></td>
       <td class="l" style="white-space:normal">${esc(d)}</td></tr>`).join('')+'</tbody>';
-
-  /* v3: summary strip and an open drawer refresh with every filter change */
-  renderSummary(dq,assumed,rows);
-  if(S.drawer)openDrawer(S.drawer);
-}
-
-/* ============================ v3: executive summary strip ============================ */
-function renderSummary(dq,assumed,rows){
-  const out=[];
-  const R=computeSLA(false);
-  if(R&&R.sla.length){
-    const behind=R.sla.filter(o=>o.state==='Behind pace');
-    const sq=R.sla.reduce((a,o)=>a+o.qtd,0), se=R.sla.reduce((a,o)=>a+o.exp,0), sc=R.sla.reduce((a,o)=>a+o.calExp,0);
-    const top=countBy(behind,o=>o.coach)[0];
-    out.push({cls:behind.length?'bad':'ok',title:R.Q.label+' talk time SLA',
-      body:`${behind.length} of ${R.sla.length} CSMs are behind pace`,
-      note:(top&&behind.length>1?`The largest group is on ${top[0]}'s team (${top[1]}). `:'')+
-        `Team pace is ${se?pct0(sq/se):'–'} on days worked and ${sc?pct0(sq/sc):'–'} on the calendar.`,
-      go:()=>{S.slaBucket=behind.length?'behind':null;setTab('sla');}});
-  }
-  const L=S.rows.filter(listOK);
-  const lastD=S.rows.map(r=>r.date).sort().pop()||'';
-  const months=[...new Set(L.map(r=>r.date.slice(0,7)))].sort().filter(m=>periodLastWeekday(m,'month')<=lastD);
-  if(months.length>=2){
-    const a=months[months.length-1], b=months[months.length-2];
-    const ka=kpiVals(L.filter(r=>r.date.startsWith(a))), kb=kpiVals(L.filter(r=>r.date.startsWith(b)));
-    const d=kb.avg&&ka.avg!=null?(ka.avg-kb.avg)/kb.avg*100:null;
-    const la=periodLabel(a,'month'), lb=periodLabel(b,'month');
-    const word=d==null?'':Math.abs(d)<0.5?`flat against ${lb}`:`${d>0?'up':'down'} ${Math.abs(d).toFixed(1)}% from ${lb}`;
-    out.push({cls:d!=null&&d<=-5?'warn':'info',title:'Month over month',
-      body:`${la} averaged ${hm(ka.avg||0)} per active day, ${word}`,
-      note:`Adjusted talk time was ${hrsL(ka.adjusted)} in ${la} and ${hrsL(kb.adjusted)} in ${lb}. Complete months only, independent of the date range.`,
-      go:()=>setTab('trend')});
-  }
-  const co=rollup(rows,r=>r.coach).filter(c=>c.key!=='Unassigned'&&c.days>0).sort((a,b)=>b.avg-a.avg);
-  if(co.length>=2){
-    const hi=co[0], lo=co[co.length-1];
-    out.push({cls:'info',title:'Coach comparison',
-      body:`${hi.key}'s team leads at ${hm(hi.avg)} per active day`,
-      note:`${lo.key}'s team is lowest at ${hm(lo.avg)}, a gap of ${hm(hi.avg-lo.avg)} per day in the selected range.`,
-      go:()=>setTab('coach')});
-  }
-  /* Data confidence card removed at Tim's request; the Data quality tab still runs every check. */
-  $('summary').innerHTML=out.map((c,i)=>`<div class="callout ${c.cls}" data-i="${i}" role="button" tabindex="0">`+
-    `<div class="ct">${esc(c.title)}</div><div class="cb">${esc(c.body)}</div><div class="cn">${esc(c.note)}</div></div>`).join('');
-  $('summary').querySelectorAll('.callout').forEach(el=>{
-    const go=()=>{out[+el.dataset.i].go();$('tabs').scrollIntoView({behavior:'smooth',block:'start'});};
-    el.onclick=go; el.onkeydown=e=>{if(e.key==='Enter')go();};});
-}
-
-/* ============================ v3: CSM drilldown drawer ============================ */
-function openDrawer(a){
-  S.drawer=a;
-  const css=getComputedStyle(document.body);
-  const cH=css.getPropertyValue('--chart1').trim(), cA=css.getPropertyValue('--chart2').trim(), cO=css.getPropertyValue('--orange').trim();
-  const md=meta(a), fV=$('from').value, tV=$('to').value;
-  const inR=d=>(!fV||d>=fV)&&(!tV||d<=tV);
-  const rowsA=S.rows.filter(r=>r.agent===a&&inR(r.date)).sort((x,y)=>x.date.localeCompare(y.date));
-  const k=kpiVals(rowsA), team=kpiVals(filtered());
-  const R=computeSLA(true), s=R&&R.sla.find(o=>o.agent===a);
-  const off=S.inter.filter(x=>x.agent===a&&inR(x.date)), acc=off.filter(x=>x.action==='Accepted').length;
-  const adjA=S.adj.filter(x=>x.agent===a&&inR(x.date)).sort((x,y)=>y.date.localeCompare(x.date));
-  const vs=team.avg&&k.avg!=null?(k.avg-team.avg)/team.avg*100:null;
-  $('dTitle').textContent=a;
-  $('dSub').textContent=[md.coach&&('Coach: '+md.coach),md.team,md.status].filter(Boolean).join(' · ')+
-    (fV&&tV?' · '+fmtD(fV)+' to '+fmtD(tV):'');
-  $('dKpis').innerHTML=[
-    ['Adjusted talk time',hrsL(k.adjusted),hms(k.adjusted)+' h:mm:ss'],
-    ['Active days',k.days,'in the selected range'],
-    ['Avg per active day',k.avg!=null?hms(k.avg):'–',vs==null?'':`${vs>=0?'+':''}${vs.toFixed(0)}% vs selection avg (${hm(team.avg)})`],
-    ['SLA pace (days worked)',s?pct0(s.pace):'–',R?R.Q.label+' to date':''],
-    ['SLA pace (calendar)',s?pct0(s.cal):'–',s?`${s.days} of ${s.elapsed} working days active`:''],
-    ['Offers accepted',off.length?pct(acc,off.length):'–',off.length+' offer'+(off.length===1?'':'s')]
-  ].map(([l,v,n])=>`<div class="kpi sm"><div class="lab">${l}</div><div class="val">${v}</div><div class="note">${esc(n)}</div></div>`).join('');
-  $('drawer').classList.add('open'); $('drawer').setAttribute('aria-hidden','false');
-  $('backdrop').classList.remove('hide');
-  drawChart('chart6',{type:'bar',
-    data:{labels:rowsA.map(r=>periodLabel(r.date,'day')),
-      datasets:[{label:'8x8 handling',data:rowsA.map(r=>r.hand/3600),backgroundColor:cH,borderRadius:2},
-                {label:'Asana adjustments',data:rowsA.map(r=>r.adj/3600),backgroundColor:cA,borderRadius:2}]},
-    options:{maintainAspectRatio:false,responsive:true,
-      scales:{x:{stacked:true,grid:{display:false},ticks:{maxRotation:0,autoSkipPadding:10}},
-              y:{stacked:true,title:{display:true,text:'Hours'}}},
-      plugins:{legend:{position:'bottom'},
-        refLine:s?{v:s.rate/3600,axis:'y',color:cO,label:'SLA rate '+hm(s.rate)}:null,
-        tooltip:{callbacks:{label:c=>c.dataset.label+': '+hms(c.raw*3600),
-          footer:it=>'Total: '+hms(it.reduce((t,x)=>t+x.raw*3600,0))}}}},
-    plugins:[refLine]});
-  $('dAdj').innerHTML=adjA.length
-    ?'<thead><tr><th class="l">Date</th><th class="l">Why not in 8x8</th><th class="l">As entered</th><th>Applied</th><th class="l">Confidence</th></tr></thead><tbody>'+
-      adjA.map(x=>{const[c,l]=confClass(x.conf);return `<tr><td class="l">${esc(x.date)}</td><td class="l" style="white-space:normal">${esc(x.reason)}</td>`+
-        `<td class="l"><code>${esc(x.text)}</code></td><td>${x.sec==null?'–':hms(x.sec)}</td><td class="l"><span class="pill ${c}">${l}</span></td></tr>`;}).join('')+'</tbody>'
-    :'<tbody><tr><td class="l">No Asana adjustments in the selected range.</td></tr></tbody>';
-  $('dDays').innerHTML='<thead><tr><th class="l">Date</th><th>Handling</th><th>Adjustments</th><th>Total</th><th class="l">Vs SLA rate</th></tr></thead><tbody>'+
-    rowsA.slice().reverse().map(r=>`<tr><td class="l">${esc(r.date)}</td><td>${hms(r.hand)}</td><td>${r.adj?hms(r.adj):'–'}</td><td>${hms(r.total)}</td>`+
-      `<td class="l">${s&&r.active?`<span class="pill ${r.total>=s.rate?'ok':'bad'}">${r.total>=s.rate?'met':'below'}</span>`:'–'}</td></tr>`).join('')+
-    `</tbody><tfoot><tr><td class="l">Total</td><td>${hms(k.hand)}</td><td>${hms(k.adj)}</td><td>${hms(k.adjusted)}</td><td class="l">${k.days} active days</td></tr></tfoot>`;
-}
-function closeDrawer(){
-  S.drawer=null;
-  $('drawer').classList.remove('open'); $('drawer').setAttribute('aria-hidden','true');
-  $('backdrop').classList.add('hide');
 }
 
 /* ============================ filters / ui ============================ */
@@ -1372,16 +1004,12 @@ function msBuild(id,vals){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.ms-panel').forEach(p=>p.classList.add('hide')));
 
-/* v2: all dates across handling, adjustments and interactions, so recent offers are in range */
-function allDates(){
-  return [...new Set(S.rows.map(r=>r.date).concat(S.inter.map(x=>x.date)).filter(Boolean))].sort();
-}
 function initFilters(){
   S.rows=buildRows();
   const u=k=>[...new Set(S.rows.map(r=>r[k]).filter(Boolean))].sort();
   msBuild('fCoach',u('coach'));msBuild('fTeam',u('team'));
   msBuild('fStatus',u('status'));msBuild('fAgent',u('agent'));
-  const ds=allDates();
+  const ds=S.rows.map(r=>r.date).sort();
   if(!$('from').value){$('from').value=ds[0];$('to').value=ds[ds.length-1];}
   const months=[...new Set(ds.map(d=>d.slice(0,7)))].sort();
   const qs=[...new Set(ds.map(d=>{const m=+d.slice(5,7);return d.slice(0,4)+' Q'+(Math.floor((m-1)/3)+1);}))].sort();
@@ -1419,13 +1047,10 @@ async function boot(fromFiles){
     fromFiles?await loadFromFiles(fromFiles):await loadFromRepo();
     initFilters();setTab(S.view);
     const bad=S.warn.length;
-    const ds=allDates();
-    /* v2: short banner, file list collapsed */
     msg(bad?'err':'info',
-      `Data current through <strong>${esc(ds[ds.length-1]||'')}</strong> · ${S.handling.length.toLocaleString()} handling rows · `+
-      `${S.adj.length} adjustment records · ${S.roster.size} CSMs on the roster after exclusions · `+
-      `<details><summary>Source files (${S.files.length})</summary><span class="sub files">${esc(DATA_BASE)} · ${esc(S.files.join(' · '))}</span></details>`+
-      (bad?`<br><strong>${bad} warning${bad===1?'':'s'}</strong>: see the Data quality tab.`:''));
+      `Loaded ${S.handling.length.toLocaleString()} handling rows, ${S.adj.length} adjustment records, ${S.roster.size} CSMs after exclusions.`+
+      ` <span class="sub">${esc(DATA_BASE)} · ${esc(S.files.join(' · '))}</span>`+
+      (bad?`<br><strong>${bad} warning${bad===1?'':'s'}</strong> — see the Data quality tab.`:''));
     $('dropPanel').classList.add('hide');
   }catch(e){
     msg('err','<strong>Could not load data.</strong> '+esc(e.message)+
@@ -1441,7 +1066,7 @@ async function boot(fromFiles){
 });
 $('clearBtn').onclick=()=>{
   Object.keys(MS).forEach(id=>{S.filters[id].clear();msRender(id);});
-  const ds=allDates();
+  const ds=S.rows.map(r=>r.date).sort();
   if(ds.length){ $('from').value=ds[0]; $('to').value=ds[ds.length-1]; }
   $('presets').querySelectorAll('button').forEach(x=>x.classList.remove('on'));
   render();
@@ -1462,37 +1087,17 @@ $('themeBtn').onclick=()=>{
   render();
 };
 try{const t=localStorage.getItem('tt-theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(_){}
-
-/* v2: export converts H:MM:SS columns to decimal hours (Excel reads them cleanly),
-   strips status pills to plain text, and the Offers tab exports both tables */
-function tableToCsv(id){
-  const HMS=/^-?\d+:\d{2}:\d{2}$/;
-  const m=[...$(id).querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>td.textContent.replace(/[▲▼]/g,'').trim()));
-  if(!m.length)return '';
-  const width=Math.max(...m.map(r=>r.length));
-  for(let j=0;j<width;j++){
-    if(!m.slice(1).some(r=>HMS.test(r[j]||'')))continue;
-    m[0][j]=(m[0][j]||'')+' (hours)';
-    m.slice(1).forEach(r=>{ const v=r[j]||''; if(!HMS.test(v))return;
-      const neg=v.startsWith('-'), [h,mi,s]=v.replace('-','').split(':').map(Number);
-      r[j]=((neg?-1:1)*(h+mi/60+s/3600)).toFixed(2); });
-  }
-  return m.map(r=>r.map(t=>/[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t).join(',')).join('\n');
-}
 $('expBtn').onclick=()=>{
-  const ids=({trend:['t-period'],agent:['t-agent'],coach:['t-coach'],inter:['t-iagent','t-icoach'],
-              sla:['t-sla'],adj:['t-adj'],dq:['t-dq']})[S.view];
-  const csv=ids.map(tableToCsv).join('\n\n');
-  const url=URL.createObjectURL(new Blob(['﻿'+csv],{type:'text/csv'}));
+  const tbl=({trend:'t-period',agent:'t-agent',coach:'t-coach',inter:'t-iagent',sla:'t-sla',adj:'t-adj',dq:'t-dq'})[S.view];
+  const rows=[...$(tbl).querySelectorAll('tr')].map(tr=>
+    [...tr.children].map(td=>{
+      const t=td.textContent.replace(/[▲▼]/g,'').trim();
+      return /[",\n]/.test(t)?'"'+t.replace(/"/g,'""')+'"':t;}).join(','));
+  const url=URL.createObjectURL(new Blob([rows.join('\n')],{type:'text/csv'}));
   const a=document.createElement('a');
   a.href=url;a.download=`pcsm-talk-time-${S.view}-${$('from').value}-to-${$('to').value}.csv`;a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  URL.revokeObjectURL(url);
 };
-/* v3: drilldown wiring. Any element with class "csm" opens the drawer. */
-document.addEventListener('click',e=>{const el=e.target.closest&&e.target.closest('.csm');if(el)openDrawer(el.dataset.a);});
-$('dClose').onclick=closeDrawer;
-$('backdrop').onclick=closeDrawer;
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&S.drawer)closeDrawer();});
 boot();
 </script>
 </body>
