@@ -2,17 +2,17 @@
   "handling": [
     "handling-aus-Aug.xlsx",
     "handling-aus-Jul.xlsx",
-    "handling-aus-Oct.xlsx",
+    "handling-aus-Oct.csv",
     "handling-aus-Sep.xlsx",
     "handling-us-Aug.xlsx",
     "handling-us-Jul.xlsx",
-    "handling-us-Oct.xlsx",
+    "handling-us-Oct.csv",
     "handling-us-Sep.xlsx"
   ],
   "adjustments": "adjustments.csv",
   "roster": "roster.csv",
-  "generated": "2026-11-02",
-  "notes": "handling files are raw 8x8 day-level exports, unmodified. Team and coach come from roster.csv. The exclude list drops coaches, optimizers and anyone not counted as a PCSM.",
+  "generated": "2026-11-04",
+  "notes": "Jul-Sep are the 8x8 \"Handling and Wrap Up\" day exports (.xlsx). From Oct the feed is the \"Agent Time On Status\" export (.csv), which covers the same metric but returns agent-days the other report drops. The parser detects the format from the file. Team and coach come from roster.csv.",
   "exclude": [
     "Luis Kepis Hernandez",
     "Julia Cowden",
