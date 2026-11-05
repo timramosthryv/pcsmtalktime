@@ -2,7 +2,7 @@
   "generated": "2026-11-05",
   "handling": ["handling-aus-Jul.xlsx","handling-aus-Aug.xlsx","handling-aus-Sep.xlsx","handling-aus-Oct.xlsx","handling-aus-Nov.xlsx",
                "handling-us-Jul.xlsx","handling-us-Aug.xlsx","handling-us-Sep.xlsx","handling-us-Oct.xlsx","handling-us-Nov.xlsx"],
-  "status":   ["status-aus-Oct.csv","status-aus-Nov.xlsx","status-us-Oct.csv","status-us-Nov.xlsx"],
+  "status":   ["status-aus-Oct.csv","status-aus-Nov.xlsx","status-us-Oct.xlsx","status-us-Nov.xlsx"],
   "interactions": ["interactions-aus-Oct.xlsx","interactions-aus-Nov.xlsx","interactions-us-Oct.xlsx","interactions-us-Nov.xlsx"],
   "adjustments": "adjustments.csv",
   "roster": "roster.csv",
