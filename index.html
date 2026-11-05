@@ -310,7 +310,7 @@ const DATA_BASE = './data/';
     on days they actually worked, so absence does not count against them.      */
 const SLA_HOURS = 75;
 /* ============================ state ============================ */
-const S={handling:[],adj:[],inter:[],tz:new Map(),unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
+const S={handling:[],statusPool:[],filled:0,adj:[],inter:[],tz:new Map(),unknownP:new Map(),roster:new Map(),files:[],warn:[],exclude:[],excluded:new Map(),view:'trend',
          filters:{fCoach:new Set(),fTeam:new Set(),fStatus:new Set(),fAgent:new Set()},msVals:{},
        sort:{period:['period',1],agent:['adjusted',-1],coach:['adjusted',-1],adj:['date',-1],
                 iagent:['offers',-1],iperiod:['key',1],sla:['pace',-1]}};
@@ -412,7 +412,7 @@ function parseHandling(wb,fname){
     if(/subtotal|^total$/i.test(first))continue;
     if(!a||String(a).trim()==='')continue;
     const iso=cellDate(r[cStart]); if(!iso)continue;
-    S.handling.push({date:iso,agent:String(a).trim(),
+    (S.sink||S.handling).push({date:iso,agent:String(a).trim(),
       group:cGroup>=0?String(r[cGroup]||'').trim():'',
       agentId:cId>=0?String(r[cId]||'').trim():'',
       sec:cellSeconds(r[cHand]),src:fname});
@@ -497,7 +497,7 @@ function parseStatusCsv(text,fname){
   objs.forEach(o=>{
     const a=String(o[cA]||'').trim(); if(!a)return;
     const iso=String(o[cS]||'').slice(0,10); if(!/^\d{4}-\d{2}-\d{2}$/.test(iso))return;
-    S.handling.push({date:iso,agent:a,group:cG?String(o[cG]||'').trim():'',
+    (S.sink||S.handling).push({date:iso,agent:a,group:cG?String(o[cG]||'').trim():'',
       agentId:cI?String(o[cI]||'').trim():'',
       sec:cellSeconds(o[cH]),
       wrap:cW?cellSeconds(o[cW]):0, loggedIn:cL?cellSeconds(o[cL]):0,
@@ -544,7 +544,7 @@ function loadAdj(objs){
 
 /* ============================ loading ============================ */
 async function loadFromRepo(){
-  S.handling=[];S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.statusPool=[];S.filled=0;S.sink=null;S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const man=await fetch(DATA_BASE+'manifest.json',{cache:'no-store'}).then(r=>{
     if(!r.ok)throw new Error('manifest.json not found at '+DATA_BASE+' ('+r.status+')');return r.json();});
   const rosterFile=man.roster||'roster.csv', adjFile=man.adjustments||'adjustments.csv';
@@ -554,14 +554,28 @@ async function loadFromRepo(){
   const at=await fetch(DATA_BASE+adjFile,{cache:'no-store'});
   if(at.ok){loadAdj(parseCSV(await at.text()));S.files.push(adjFile);}
   else S.warn.push(adjFile+' not found, so no adjustments are applied');
-  for(const f of (man.handling||[])){
-    const r=await fetch(DATA_BASE+f,{cache:'no-store'});
-    if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
-    const n=/\.csv$/i.test(f)
-      ? parseStatusCsv(await r.text(),f)
-      : parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
-    S.files.push(`${f} (${n} rows)`);
-  }
+  /* Two 8x8 feeds. The Agent Interactions Handling and Wrap Up export is the
+     primary: it is what Rich's PS Pacing report and the PS Timecard run on,
+     and it is the feed we validated to 95% in September. The Agent Time On
+     Status report measures time spent in the Handling state and runs roughly
+     3.4% lower on every CSM, but it returns agent-days the primary export
+     drops when an agent is deactivated. So status rows are used only to fill
+     agent-days the primary has no row for. */
+  const readFeed=async(list,sink)=>{
+    S.sink=sink;
+    for(const f of (list||[])){
+      const r=await fetch(DATA_BASE+f,{cache:'no-store'});
+      if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
+      const n=/\.csv$/i.test(f)
+        ? parseStatusCsv(await r.text(),f)
+        : parseHandling(XLSX.read(new Uint8Array(await r.arrayBuffer()),{type:'array'}),f);
+      S.files.push(`${f} (${n} rows)`);
+    }
+    S.sink=null;
+  };
+  await readFeed(man.handling,S.handling);
+  await readFeed(man.status,S.statusPool);
+  mergeStatusFill();
   for(const f of (man.interactions||[])){
     const r=await fetch(DATA_BASE+f,{cache:'no-store'});
     if(!r.ok){S.warn.push(f+' listed in manifest but not found');continue;}
@@ -571,6 +585,21 @@ async function loadFromRepo(){
   S.exclude=man.exclude||[];
   applyExclusions();
   if(!S.handling.length)throw new Error('No handling rows were parsed from any file listed in the manifest.');
+}
+/* Fill agent-days the primary export has no row for, from the status pool.
+   Keyed on agent plus date, so a day the primary reports at zero still wins:
+   a real zero is information, and overwriting it would double-count. */
+function mergeStatusFill(){
+  S.filled=0;
+  if(!S.statusPool.length)return;
+  const have=new Set(S.handling.map(h=>h.agent+'|'+h.date));
+  S.statusPool.forEach(h=>{
+    const k=h.agent+'|'+h.date;
+    if(have.has(k))return;
+    have.add(k);
+    S.handling.push(Object.assign({},h,{fill:true}));
+    S.filled++;
+  });
 }
 function applyExclusions(){
   const ex=new Set(S.exclude); S.excluded=new Map();
@@ -592,7 +621,7 @@ function applyExclusions(){
   ex.forEach(n=>S.roster.delete(n));
 }
 async function loadFromFiles(list){
-  S.handling=[];S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
+  S.handling=[];S.statusPool=[];S.filled=0;S.sink=null;S.adj=[];S.inter=[];S.tz=new Map();S.unknownP=new Map();S.roster=new Map();S.files=[];S.warn=[];
   const arr=[...list], csvs=arr.filter(f=>/\.csv$/i.test(f.name));
   for(const f of csvs){
     const txt=await f.text(), objs=parseCSV(txt), h=Object.keys(objs[0]||{});
@@ -902,6 +931,9 @@ function render(){
   const dupe=(()=>{const m=new Map();S.handling.forEach(h=>{const k=h.agent+h.date;m.set(k,(m.get(k)||0)+1);});
     return [...m.values()].filter(v=>v>1).length;})();
   dq.push(['Handling rows parsed',S.handling.length,'ok','From '+(S.files.filter(f=>/rows\)/.test(f)).length)+' export file(s)']);
+  dq.push(['Agent-days filled from Agent Time On Status',S.filled,S.filled?'warn':'ok',
+    S.filled?'The Handling and Wrap Up export had no row for these agent-days, usually a deactivated agent. Filled from the status report, which runs about 3.4% low.'
+            :'Every agent-day came from the primary Handling and Wrap Up export']);
   if(S.exclude.length){
     const det=[...S.excluded.entries()].map(([n,e])=>`${n} (${e.rows} row${e.rows===1?'':'s'}, ${hms(e.sec)})`).join('; ');
     dq.push(['Agents excluded by manifest',S.exclude.length,'ok',
