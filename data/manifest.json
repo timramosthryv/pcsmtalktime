@@ -1,31 +1,12 @@
 {
-  "handling": [
-    "handling-aus-Aug.xlsx",
-    "handling-aus-Jul.xlsx",
-    "handling-aus-Oct.csv",
-    "handling-aus-Sep.xlsx",
-    "handling-us-Aug.xlsx",
-    "handling-us-Jul.xlsx",
-    "handling-us-Oct.csv",
-    "handling-us-Sep.xlsx"
-  ],
+  "generated": "2026-11-05",
+  "handling": ["handling-aus-Jul.xlsx","handling-aus-Aug.xlsx","handling-aus-Sep.xlsx","handling-aus-Oct.xlsx","handling-aus-Nov.xlsx",
+               "handling-us-Jul.xlsx","handling-us-Aug.xlsx","handling-us-Sep.xlsx","handling-us-Oct.xlsx","handling-us-Nov.xlsx"],
+  "status":   ["status-aus-Oct.csv","status-aus-Nov.xlsx","status-us-Oct.csv","status-us-Nov.xlsx"],
+  "interactions": ["interactions-aus-Oct.xlsx","interactions-aus-Nov.xlsx","interactions-us-Oct.xlsx","interactions-us-Nov.xlsx"],
   "adjustments": "adjustments.csv",
   "roster": "roster.csv",
-  "generated": "2026-11-04",
-  "notes": "Jul-Sep are the 8x8 \"Handling and Wrap Up\" day exports (.xlsx). From Oct the feed is the \"Agent Time On Status\" export (.csv), which covers the same metric but returns agent-days the other report drops. The parser detects the format from the file. Team and coach come from roster.csv.",
-  "exclude": [
-    "Luis Kepis Hernandez",
-    "Julia Cowden",
-    "Julian Komimbin",
-    "Keila Revell",
-    "Dajuana Benson",
-    "Jorge Martinez Suriel",
-    "Luis Ozuna Mercedes",
-    "Jake Tayler"
-  ],
-  "interactions": [
-    "interactions-aus-Oct.xlsx",
-    "interactions-us-Nov.xlsx",
-    "interactions-us-Oct.xlsx"
-  ]
+  "exclude": ["Luis Kepis Hernandez","Julia Cowden","Julian Komimbin","Keila Revell",
+              "Dajuana Benson","Jorge Martinez Suriel","Luis Ozuna Mercedes","Jake Tayler",
+              "Alex Esfeld"]
 }
