@@ -81,6 +81,10 @@ button.primary:hover{filter:brightness(1.06)}
 .presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
 .presets button{padding:6px 13px;font-size:12.5px;border-radius:20px;font-weight:600}
 .presets button.on{background:var(--orange-soft);color:var(--orange);border-color:var(--orange)}
+/* Clear all filters is an action, not a range: a gap and a lighter weight
+   separate it from the date presets it now shares a row with. */
+.presets button.clear{margin-left:10px;font-weight:500;color:var(--muted)}
+.presets button.clear:hover{color:var(--ink)}
 
 /* stat cards */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px;margin-bottom:18px}
@@ -195,9 +199,12 @@ code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12px;
     <div class="f"><label>Status</label><div class="ms" id="msStatus"></div></div>
     <div class="f"><label>Agent</label><div class="ms" id="msAgent"></div></div>
   </div>
-  <div class="presets" id="presets"></div>
-  <div class="presets" style="margin-top:8px">
-    <button id="clearBtn">Clear all filters</button>
+  <!-- One flex row. #presets uses display:contents so the buttons it renders
+       participate in this row directly, letting Clear all filters sit with
+       them and wrap naturally instead of being forced onto its own line. -->
+  <div class="presets">
+    <span id="presets" style="display:contents"></span>
+    <button id="clearBtn" class="clear">Clear all filters</button>
     <span class="sub" style="align-self:center;font-size:12px">resets the lists and the date range</span>
   </div>
   <div class="hint" style="margin:10px 0 0">
