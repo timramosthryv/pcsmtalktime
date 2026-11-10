@@ -345,15 +345,30 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-10-30,Brittany Hohensee,Brittany Hohensee,1320,Account related call via other system,22m,ASSUMED minutes from note
 2026-10-30,Jason Hockett,Jason Hockett,3885,Account related call via other system,1:04:45,Explicit h:mm:ss
 2026-10-30,Mark Hayes,Mark Hayes,1850,Account related call via other system,30:50,ASSUMED mm:ss
-2026-11-02,Brittany Hohensee,Brittany Hohensee,2520,Account related call via other system,42m,ASSUMED minutes from note
+2026-11-02,Brittany Hohensee,Brittany Hohensee,2536,Account related call via other system,00:42:16,Explicit h:mm:ss
 2026-11-02,Keila Moreno Mercado,Keila Moreno,1800,8x8 Issue,30 minutes,Explicit units
 2026-11-02,Casey Nugent,Casey Nugent,2160,Account related call via other system,36 minutes,Explicit units
-2026-11-03,Brittany Hohensee,Brittany Hohensee,1260,Account related call via other system,21m,ASSUMED minutes from note
-2026-11-03,William King,Will King,1252,Account related call via other system,20:52,ASSUMED mm:ss
-2026-11-03,Casey Nugent,Casey Nugent,2100,Account related call via other system,35 minutes,Explicit units
+2026-11-03,William King,Will King,1252,Account related call via other system,00:20:52,Explicit h:mm:ss
+2026-11-03,Brittany Hohensee,Brittany Hohensee,1291,Account related call via other system,00:21:31,Explicit h:mm:ss
 2026-11-03,Lauren Crutchfield,Lauren Crutchfield,1141,Account related call via other system,19 minutes and 1 second,Explicit units
-2026-11-04,Sydney Pacheco,Sydney Pacheco,2220,Account related call via other system,37 Minutes,Explicit units
-2026-11-04,Brittany Hohensee,Brittany Hohensee,960,Account related call via other system,16m,ASSUMED minutes from note
-2026-11-04,Alicia Battiata,Alicia Battiata,2002,8x8 Issue,33:22,ASSUMED mm:ss
-2026-11-04,Jenny Kimerling,Jenny Kimerling,1200,Client Called Directly,20 minites,Explicit units
-2026-11-04,William King,Will King,1384,Account related call via other system,23:04,ASSUMED mm:ss
+2026-11-03,Casey Nugent,Casey Nugent,2100,Account related call via other system,00:35:00,Explicit h:mm:ss
+2026-11-04,Sydney Pacheco,Sydney Pacheco,2226,Account related call via other system,00:37:06,Explicit h:mm:ss
+2026-11-04,Brittany Hohensee,Brittany Hohensee,972,Account related call via other system,00:16:12,Explicit h:mm:ss
+2026-11-04,Alicia Battiata,Alicia Battiata,2002,8x8 Issue,00:33:22,Explicit h:mm:ss
+2026-11-04,Jenny Kimerling,Jenny Kimerling,1200,Client Called Directly,00:20:00,Explicit h:mm:ss
+2026-11-04,William King,Will King,1384,Account related call via other system,00:23:04,Explicit h:mm:ss
+2026-11-05,Teresa Gregorio,Teresa Gregorio,749,Account related call via other system,12m 29s,Explicit units
+2026-11-05,Lisbeth Cruz Marte,Lisbeth Cruz Marte,3899,Account related call via other system,01:04:59,Explicit h:mm:ss
+2026-11-05,Summer Rima,Summer Rima,6180,8x8 Issue,103,ASSUMED minutes
+2026-11-06,Brittany Hohensee,Brittany Hohensee,6252,8x8 Issue,01:44:12,Explicit h:mm:ss
+2026-11-06,Hunter Leake,Hunter Leake,3309,Account related call via other system,55:09:00,"55 min 09 sec, confirmed by Tim Ramos Nov 2026"
+2026-11-06,Mark Hayes,Mark Hayes,1714,8x8 Issue,28:34,ASSUMED mm:ss
+2026-11-06,Mark Hayes,Mark Hayes,1744,Account related call via other system,29:04,ASSUMED mm:ss
+2026-11-06,Mark Hayes,Mark Hayes,1731,8x8 Issue,28:51,ASSUMED mm:ss
+2026-11-06,Holly Fatla,Holly Koehn,960,Account related call via other system,16m,ASSUMED minutes from note
+2026-11-09,Brittany Hohensee,Brittany Hohensee,4466,Account related call via other system,01:14:26,Explicit h:mm:ss
+2026-11-09,William King,Will King,1536,Account related call via other system,00:25.36,FLAG mixed separators; read as 25m36s
+2026-11-09,Brittany Hohensee,Brittany Hohensee,972,Account related call via other system,00:16:12,Explicit h:mm:ss
+2026-11-09,Taylor Sloan,Taylor Sloan,2940,8x8 Issue,49,ASSUMED minutes
+2026-11-10,Teresa Gregorio,Teresa Gregorio,584,Account related call via other system,9m 44s,Explicit units
+2026-11-10,Teresa Gregorio,Teresa Gregorio,785,Account related call via other system,13m 5s,Explicit units
