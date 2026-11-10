@@ -931,6 +931,7 @@ function render(){
   const dupe=(()=>{const m=new Map();S.handling.forEach(h=>{const k=h.agent+h.date;m.set(k,(m.get(k)||0)+1);});
     return [...m.values()].filter(v=>v>1).length;})();
   dq.push(['Handling rows parsed',S.handling.length,'ok','From '+(S.files.filter(f=>/rows\)/.test(f)).length)+' export file(s)']);
+  dq.push(['Source files loaded',S.files.length,'ok',DATA_BASE+' · '+S.files.join(' · ')]);
   dq.push(['Agent-days filled from Agent Time On Status',S.filled,S.filled?'warn':'ok',
     S.filled?'The Handling and Wrap Up export had no row for these agent-days, usually a deactivated agent. Filled from the status report, which runs about 3.4% low.'
             :'Every agent-day came from the primary Handling and Wrap Up export']);
@@ -1078,11 +1079,13 @@ async function boot(fromFiles){
   try{
     fromFiles?await loadFromFiles(fromFiles):await loadFromRepo();
     initFilters();setTab(S.view);
+    /* A clean load says nothing. The source-file inventory lives on the Data
+       quality tab, where someone auditing the numbers will look for it, rather
+       than across the top of the page where it is the first thing a reader
+       sees and the least useful. Only problems surface here. */
     const bad=S.warn.length;
-    msg(bad?'err':'info',
-      `Loaded ${S.handling.length.toLocaleString()} handling rows, ${S.adj.length} adjustment records, ${S.roster.size} CSMs after exclusions.`+
-      ` <span class="sub">${esc(DATA_BASE)} · ${esc(S.files.join(' · '))}</span>`+
-      (bad?`<br><strong>${bad} warning${bad===1?'':'s'}</strong> — see the Data quality tab.`:''));
+    if(bad) msg('err',`<strong>${bad} warning${bad===1?'':'s'} while loading.</strong> See the Data quality tab for detail.`);
+    else $('status').classList.add('hide');
     $('dropPanel').classList.add('hide');
   }catch(e){
     msg('err','<strong>Could not load data.</strong> '+esc(e.message)+
