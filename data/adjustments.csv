@@ -373,3 +373,8 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-10,Erika Hubbard,Erika Hubbard,2402,8x8 Issue,00:40:02,Explicit h:mm:ss
 2026-11-10,Teresa Gregorio,Teresa Gregorio,584,Account related call via other system,9m 44s,Explicit units
 2026-11-10,Teresa Gregorio,Teresa Gregorio,785,Account related call via other system,13m 5s,Explicit units
+2026-11-11,Hunter Leake,Hunter Leake,5507,Account related call via other system,01:31:47,Explicit h:mm:ss
+2026-11-12,Teresa Gregorio,Teresa Gregorio,601,Account related call via other system,10m 1s,Explicit units; possible duplicate of next row (same account)
+2026-11-12,Teresa Gregorio,Teresa Gregorio,509,Account related call via other system,8m 29s,Explicit units
+2026-11-12,Teresa Gregorio,Teresa Gregorio,601,Account related call via other system,10m 1s,Explicit units; possible duplicate of earlier row (same account)
+2026-11-12,Teresa Gregorio,Teresa Gregorio,745,Account related call via other system,12m 25s,Explicit units
