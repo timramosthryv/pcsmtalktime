@@ -358,8 +358,9 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-04,Sydney Pacheco,Sydney Pacheco,2226,Account related call via other system,00:37:06,Explicit h:mm:ss
 2026-11-04,William King,Will King,1384,Account related call via other system,00:23:04,Explicit h:mm:ss
 2026-11-05,Lisbeth Cruz Marte,Lisbeth Cruz Marte,3899,Account related call via other system,01:04:59,Explicit h:mm:ss
-2026-11-05,Summer Rima,Summer Rima,6180,8x8 Issue,103,ASSUMED minutes
+2026-11-05,Summer Rima,Summer Rima,3780,8x8 Issue,01:03:00,"Explicit h:mm:ss; corrected in Asana Nov 13 (was 103, read as 103 min)"
 2026-11-05,Teresa Gregorio,Teresa Gregorio,749,Account related call via other system,12m 29s,Explicit units
+2026-11-05,Teresa Gregorio,Teresa Gregorio,2700,8x8 Issue,45m,Explicit units; Reliable Surveys
 2026-11-06,Brittany Hohensee,Brittany Hohensee,6252,8x8 Issue,01:44:12,Explicit h:mm:ss
 2026-11-06,Holly Fatla,Holly Koehn,960,Account related call via other system,16m,ASSUMED minutes from note
 2026-11-06,Hunter Leake,Hunter Leake,3309,Account related call via other system,55:09:00,"55 min 09 sec, confirmed by Tim Ramos Nov 2026"
@@ -378,3 +379,5 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-12,Teresa Gregorio,Teresa Gregorio,509,Account related call via other system,8m 29s,Explicit units
 2026-11-12,Teresa Gregorio,Teresa Gregorio,601,Account related call via other system,10m 1s,Explicit units; possible duplicate of earlier row (same account)
 2026-11-12,Teresa Gregorio,Teresa Gregorio,745,Account related call via other system,12m 25s,Explicit units
+2026-11-12,Holly Fatla,Holly Koehn,3192,Account related call via other system,00:53:12,Explicit h:mm:ss
+2026-11-12,Holly Fatla,Holly Koehn,1961,Account related call via other system,00:32:41,Explicit h:mm:ss
