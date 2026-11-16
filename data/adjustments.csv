@@ -369,7 +369,7 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-06,Mark Hayes,Mark Hayes,1731,8x8 Issue,28:51,ASSUMED mm:ss
 2026-11-09,Brittany Hohensee,Brittany Hohensee,4466,Account related call via other system,01:14:26,Explicit h:mm:ss
 2026-11-09,Brittany Hohensee,Brittany Hohensee,972,Account related call via other system,00:16:12,Explicit h:mm:ss
-2026-11-09,Taylor Sloan,Taylor Sloan,2940,8x8 Issue,49,ASSUMED minutes
+2026-11-09,Taylor Sloan,Taylor Sloan,2940,8x8 Issue,00:49:00,Explicit h:mm:ss; confirmed in Asana Nov 16 (was 49)
 2026-11-09,William King,Will King,1536,Account related call via other system,00:25.36,FLAG mixed separators; read as 25m36s
 2026-11-10,Erika Hubbard,Erika Hubbard,2402,8x8 Issue,00:40:02,Explicit h:mm:ss
 2026-11-10,Teresa Gregorio,Teresa Gregorio,584,Account related call via other system,9m 44s,Explicit units
@@ -381,3 +381,11 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-12,Teresa Gregorio,Teresa Gregorio,745,Account related call via other system,12m 25s,Explicit units
 2026-11-12,Holly Fatla,Holly Koehn,3192,Account related call via other system,00:53:12,Explicit h:mm:ss
 2026-11-12,Holly Fatla,Holly Koehn,1961,Account related call via other system,00:32:41,Explicit h:mm:ss
+2026-11-12,Jasmine McLain,Jasmine McLain,1314,Account related call via other system,00:21:54,Explicit h:mm:ss
+2026-11-12,Jasmine McLain,Jasmine McLain,332,Account related call via other system,00:05:32,Explicit h:mm:ss
+2026-11-13,Haley Mitchell,Haley Mitchell,4715,Account related call via other system,01:18:35,Explicit h:mm:ss
+2026-11-13,Holly Fatla,Holly Koehn,1283,Account related call via other system,00:21:23,Explicit h:mm:ss
+2026-11-13,Jenny Kimerling,Jenny Kimerling,1620,8x8 Issue,00:27:00,Explicit h:mm:ss
+2026-11-13,Glenys Rodriguez,Glenys Rodriguez Gomez,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Yenifer Medina (shared call)
+2026-11-13,Yenifer Medina Perez,Yenifer Medina,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Glenys Rodriguez (shared call)
+2026-11-13,Lauren Crutchfield,Lauren Crutchfield,642,Account related call via other system,00:10:42,Explicit h:mm:ss
