@@ -357,6 +357,7 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-04,Jenny Kimerling,Jenny Kimerling,1200,Client Called Directly,00:20:00,Explicit h:mm:ss
 2026-11-04,Sydney Pacheco,Sydney Pacheco,2226,Account related call via other system,00:37:06,Explicit h:mm:ss
 2026-11-04,William King,Will King,1384,Account related call via other system,00:23:04,Explicit h:mm:ss
+2026-11-04,Chyna Elias,Chyna Elias,606,Account related call via other system,00:10:06,Explicit h:mm:ss; submitted Nov 16
 2026-11-05,Lisbeth Cruz Marte,Lisbeth Cruz Marte,3899,Account related call via other system,01:04:59,Explicit h:mm:ss
 2026-11-05,Summer Rima,Summer Rima,3780,8x8 Issue,01:03:00,"Explicit h:mm:ss; corrected in Asana Nov 13 (was 103, read as 103 min)"
 2026-11-05,Teresa Gregorio,Teresa Gregorio,749,Account related call via other system,12m 29s,Explicit units
@@ -371,6 +372,7 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-09,Brittany Hohensee,Brittany Hohensee,972,Account related call via other system,00:16:12,Explicit h:mm:ss
 2026-11-09,Taylor Sloan,Taylor Sloan,2940,8x8 Issue,00:49:00,Explicit h:mm:ss; confirmed in Asana Nov 16 (was 49)
 2026-11-09,William King,Will King,1536,Account related call via other system,00:25.36,FLAG mixed separators; read as 25m36s
+2026-11-09,Chyna Elias,Chyna Elias,1860,Account related call via other system,00:31:00,Explicit h:mm:ss; submitted Nov 16
 2026-11-10,Erika Hubbard,Erika Hubbard,2402,8x8 Issue,00:40:02,Explicit h:mm:ss
 2026-11-10,Teresa Gregorio,Teresa Gregorio,584,Account related call via other system,9m 44s,Explicit units
 2026-11-10,Teresa Gregorio,Teresa Gregorio,785,Account related call via other system,13m 5s,Explicit units
@@ -383,9 +385,14 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-12,Holly Fatla,Holly Koehn,1961,Account related call via other system,00:32:41,Explicit h:mm:ss
 2026-11-12,Jasmine McLain,Jasmine McLain,1314,Account related call via other system,00:21:54,Explicit h:mm:ss
 2026-11-12,Jasmine McLain,Jasmine McLain,332,Account related call via other system,00:05:32,Explicit h:mm:ss
+2026-11-12,Chyna Elias,Chyna Elias,1108,Account related call via other system,00:18:28,Explicit h:mm:ss; submitted Nov 16
+2026-11-12,Chyna Elias,Chyna Elias,2681,Account related call via other system,00:44:41,Explicit h:mm:ss; submitted Nov 16
 2026-11-13,Haley Mitchell,Haley Mitchell,4715,Account related call via other system,01:18:35,Explicit h:mm:ss
 2026-11-13,Holly Fatla,Holly Koehn,1283,Account related call via other system,00:21:23,Explicit h:mm:ss
 2026-11-13,Jenny Kimerling,Jenny Kimerling,1620,8x8 Issue,00:27:00,Explicit h:mm:ss
 2026-11-13,Glenys Rodriguez,Glenys Rodriguez Gomez,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Yenifer Medina (shared call)
 2026-11-13,Yenifer Medina Perez,Yenifer Medina,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Glenys Rodriguez (shared call)
 2026-11-13,Lauren Crutchfield,Lauren Crutchfield,642,Account related call via other system,00:10:42,Explicit h:mm:ss
+2026-11-16,Sydney Pacheco,Sydney Pacheco,3500,Account related call via other system,00:58:20,Explicit h:mm:ss
+2026-11-16,Chyna Elias,Chyna Elias,1380,Account related call via other system,00:23:00,Explicit h:mm:ss
+2026-11-16,Chyna Elias,Chyna Elias,1942,Account related call via other system,00:32:22,Explicit h:mm:ss
