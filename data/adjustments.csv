@@ -361,7 +361,7 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-05,Lisbeth Cruz Marte,Lisbeth Cruz Marte,3899,Account related call via other system,01:04:59,Explicit h:mm:ss
 2026-11-05,Summer Rima,Summer Rima,3780,8x8 Issue,01:03:00,"Explicit h:mm:ss; corrected in Asana Nov 13 (was 103, read as 103 min)"
 2026-11-05,Teresa Gregorio,Teresa Gregorio,749,Account related call via other system,12m 29s,Explicit units
-2026-11-05,Teresa Gregorio,Teresa Gregorio,2700,8x8 Issue,45m,Explicit units; Reliable Surveys
+2026-11-05,Teresa Gregorio,Teresa Gregorio,2700,8x8 Issue,00:45:00,Explicit units; Reliable Surveys
 2026-11-06,Brittany Hohensee,Brittany Hohensee,6252,8x8 Issue,01:44:12,Explicit h:mm:ss
 2026-11-06,Holly Fatla,Holly Koehn,960,Account related call via other system,16m,ASSUMED minutes from note
 2026-11-06,Hunter Leake,Hunter Leake,3309,Account related call via other system,55:09:00,"55 min 09 sec, confirmed by Tim Ramos Nov 2026"
@@ -393,6 +393,24 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-13,Glenys Rodriguez,Glenys Rodriguez Gomez,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Yenifer Medina (shared call)
 2026-11-13,Yenifer Medina Perez,Yenifer Medina,2212,Account related call via other system,00:36:52,Explicit h:mm:ss; same account and length as Glenys Rodriguez (shared call)
 2026-11-13,Lauren Crutchfield,Lauren Crutchfield,642,Account related call via other system,00:10:42,Explicit h:mm:ss
+2026-11-13,Lisbeth Cruz Marte,Lisbeth Cruz Marte,900,8x8 Issue,15 mins,Explicit units; submitted Nov 18
+2026-11-13,Haley Mitchell,Haley Mitchell,1658,8x8 Issue,00:27:38,Explicit h:mm:ss; submitted Nov 17
 2026-11-16,Sydney Pacheco,Sydney Pacheco,3500,Account related call via other system,00:58:20,Explicit h:mm:ss
 2026-11-16,Chyna Elias,Chyna Elias,1380,Account related call via other system,00:23:00,Explicit h:mm:ss
 2026-11-16,Chyna Elias,Chyna Elias,1942,Account related call via other system,00:32:22,Explicit h:mm:ss
+2026-11-16,Taylor Sloan,Taylor Sloan,1972,Account related call via other system,32:52,ASSUMED mm:ss
+2026-11-17,Lisbeth Cruz Marte,Lisbeth Cruz Marte,4360,8x8 Issue,01:12:40,Explicit h:mm:ss
+2026-11-17,Glenys Rodriguez,Glenys Rodriguez Gomez,83,8x8 Issue,01:23,FLAG two-part value read as mm:ss (1m23s); may mean 1h23m
+2026-11-17,Madison McCaskey,Madison McCaskey,3617,Account related call via other system,1:00:17,Explicit h:mm:ss
+2026-11-17,Holly Fatla,Holly Koehn,1924,8x8 Issue,00:32:04,Explicit h:mm:ss
+2026-11-17,Holly Fatla,Holly Koehn,1164,Account related call via other system,00:19:24,Explicit h:mm:ss
+2026-11-17,Holly Fatla,Holly Koehn,3600,Account related call via other system,01:00:00,Explicit h:mm:ss
+2026-11-17,Brittany Hohensee,Brittany Hohensee,1852,Account related call via other system,00:30:52,Explicit h:mm:ss
+2026-11-17,Sydney Pacheco,Sydney Pacheco,1901,Account related call via other system,00:31:41,Explicit h:mm:ss
+2026-11-17,Sydney Pacheco,Sydney Pacheco,1343,Account related call via other system,00:22:23,Explicit h:mm:ss
+2026-11-18,Madison McCaskey,Madison McCaskey,4206,8x8 Issue,01:10:06,Explicit h:mm:ss
+2026-11-18,Brittany Hohensee,Brittany Hohensee,1370,Account related call via other system,00:22:50,Explicit h:mm:ss
+2026-11-18,Brittany Hohensee,Brittany Hohensee,3660,8x8 Issue,01:01:00,Explicit h:mm:ss
+2026-11-18,Brittany Hohensee,Brittany Hohensee,4500,8x8 Issue,01:15:00,Explicit h:mm:ss
+2026-11-18,Antonio Perez,Antonio Perez,4664,Account related call via other system,01:17:44,Explicit h:mm:ss
+2026-11-18,Taylor Sloan,Taylor Sloan,620,Account related call via other system,10:20,ASSUMED mm:ss
