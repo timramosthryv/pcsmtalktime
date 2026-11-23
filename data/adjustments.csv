@@ -400,7 +400,7 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-16,Chyna Elias,Chyna Elias,1942,Account related call via other system,00:32:22,Explicit h:mm:ss
 2026-11-16,Taylor Sloan,Taylor Sloan,1972,Account related call via other system,32:52,ASSUMED mm:ss
 2026-11-17,Lisbeth Cruz Marte,Lisbeth Cruz Marte,4360,8x8 Issue,01:12:40,Explicit h:mm:ss
-2026-11-17,Glenys Rodriguez,Glenys Rodriguez Gomez,83,8x8 Issue,01:23,FLAG two-part value read as mm:ss (1m23s); may mean 1h23m
+2026-11-17,Glenys Rodriguez,Glenys Rodriguez Gomez,4980,8x8 Issue,01:23:00,Explicit h:mm:ss; corrected in Asana Nov 20 (was 01:23)
 2026-11-17,Madison McCaskey,Madison McCaskey,3617,Account related call via other system,1:00:17,Explicit h:mm:ss
 2026-11-17,Holly Fatla,Holly Koehn,1924,8x8 Issue,00:32:04,Explicit h:mm:ss
 2026-11-17,Holly Fatla,Holly Koehn,1164,Account related call via other system,00:19:24,Explicit h:mm:ss
@@ -414,3 +414,14 @@ date,agent,asana_csm,seconds,reason,length_text,confidence
 2026-11-18,Brittany Hohensee,Brittany Hohensee,4500,8x8 Issue,01:15:00,Explicit h:mm:ss
 2026-11-18,Antonio Perez,Antonio Perez,4664,Account related call via other system,01:17:44,Explicit h:mm:ss
 2026-11-18,Taylor Sloan,Taylor Sloan,620,Account related call via other system,10:20,ASSUMED mm:ss
+2026-11-19,Will King,Will King,1958,Account related call via other system,00:32:38,Explicit h:mm:ss
+2026-11-19,Chyna Elias,Chyna Elias,1020,Account related call via other system,00:17:00,Explicit h:mm:ss
+2026-11-19,Jasmine McLain,Jasmine McLain,715,Account related call via other system,00:11:55,Explicit h:mm:ss
+2026-11-19,Jasmine McLain,Jasmine McLain,435,Account related call via other system,00:07:15,Explicit h:mm:ss
+2026-11-20,Holly Fatla,Holly Koehn,1203,Account related call via other system,00:20:03,Explicit h:mm:ss
+2026-11-20,Holly Fatla,Holly Koehn,1837,Account related call via other system,00:30:37,Explicit h:mm:ss
+2026-11-20,Jaclyn Allen,Jaclyn Allen,1416,Account related call via other system,00.23.36,FLAG periods as separators; read as 23m36s
+2026-11-20,Jaclyn Allen,Jaclyn Allen,3153,Account related call via other system,00:52.33,FLAG mixed separators; read as 52m33s
+2026-11-20,Donny Dishmey Febles,Donny Dishmey Febles,783,Account related call via other system,00:13:03,Explicit h:mm:ss
+2026-11-23,Brittany Hohensee,Brittany Hohensee,1810,Account related call via other system,00:30:10,Explicit h:mm:ss
+2026-11-23,Mansi Aggarwal,Mansi Aggarwal,2700,Account related call via other system,45 mins,Explicit units
